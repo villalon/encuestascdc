@@ -22,6 +22,11 @@
  * @copyright 2018 Universidad Adolfo Ibáñez
  * @author Jorge Villalón <jorge.villalon@uai.cl>
  */
+ $NOMBRES_DESTINATARIOS = array(
+     'teacher' => 'Profesor',
+     'program-director' => 'Director de Programa',
+     'client' => 'Cliente',
+     );
  /**
  * Obtiene los gráficos de preguntas tipo rank de la encuesta
  * 
@@ -365,11 +370,11 @@ function encuestascdc_obtiene_profesores($stats, $profesor1, $profesor2, $profes
         foreach($statcourse as $seccion => $statstype) {
             if(substr($seccion, 0, 24) === 'EVALUACIÓN DEL PROFESOR') {
                 $numprof = substr($seccion, -3);
-                if(($numprof === '-P1' || $numprof === 'SOR') && !in_array($profesor1, $teachers)) {
+                if(($numprof === '-P1' || $numprof === 'SOR')) {
                     $teachers[] = $profesor1;
-                } elseif($numprof === '-P2' && !in_array($profesor2, $teachers)) {
+                } elseif($numprof === '-P2') {
                     $teachers[] = $profesor2;
-                } elseif($numprof === '-P3' && !in_array($profesor3, $teachers)) {
+                } elseif($numprof === '-P3') {
                     $teachers[] = $profesor3;
                 }
             }
@@ -572,15 +577,14 @@ function uol_tabla_respuesta_text($respuesta, $profesor1, $profesor2, $coordinad
             <td><textarea class='comentarios' name='text$respuesta->id' rows=$numanswers disabled>$answers</textarea></td>
         </tr>
         <tr>
-            <td>SIC: Así fue escrito.</td>
+            <td class='sic'>SIC: Así fue escrito.</td>
         </tr>
     </table>
 </div>";
 }
-function encuestascdc_dibujar_reporte($stats, $profesor1, $profesor2, $profesor3, $coordinadora, $reporttype, $destinatario) {
+function encuestascdc_dibujar_reporte($stats, $profesores, $profesorindex, $coordinadora, $reporttype, $destinatario) {
     foreach($stats['bysection_questions'] as $section => $questions) {
         if(!$sectionstats = $stats['bysection_average'][$section]) {
-            echo 'ERROR GRAVE: No hay stats para sección ' . $section;
             continue;
         }
         $sectioncomments = false;
@@ -589,7 +593,7 @@ function encuestascdc_dibujar_reporte($stats, $profesor1, $profesor2, $profesor3
         }
         $htmlcomments = '';
         if($sectioncomments) {
-            $htmlcomments = encuestascdc_dibuja_comentarios($sectioncomments, $profesor1, $profesor2, $profesor3, $coordinadora);
+            $htmlcomments = encuestascdc_dibuja_comentarios($sectioncomments, $profesores, $profesorindex, $coordinadora);
         }
         $sectionstats->promedio = round($sectionstats->promedio, 1);
         if($sectionstats->rank === '4') {
@@ -597,30 +601,30 @@ function encuestascdc_dibujar_reporte($stats, $profesor1, $profesor2, $profesor3
         } else {
             $scaletext = 'En una escala de 1 a 7, donde 1 es Muy Malo y 7 es Excelente, con qué nota evaluaría:';
         }
-        $html = encuestascdc_dibuja_seccion($section, $scaletext, $profesor1, $profesor2, $profesor3, $coordinadora, $questions, $stats, $htmlcomments, $reporttype, $destinatario);
+        $html = encuestascdc_dibuja_seccion($section, $scaletext, $profesores, $profesorindex, $coordinadora, $questions, $stats, $htmlcomments, $reporttype, $destinatario);
         echo $html;
     }
     foreach($stats['bysection_comments'] as $section => $comments) {
         if(isset($stats['bysection_average'][$section])) {
             continue;
         }
-        $htmlcomments = encuestascdc_dibuja_comentarios($comments, $profesor1, $profesor2, $profesor3, $coordinadora);
+        $htmlcomments = encuestascdc_dibuja_comentarios($comments, $profesores, $profesorindex, $coordinadora);
         $scaletext = "";
-        $html = encuestascdc_dibuja_seccion($section, $scaletext, $profesor1, $profesor2, $profesor3, $coordinadora, NULL, NULL, $htmlcomments, $reporttype, $destinatario);
+        $html = encuestascdc_dibuja_seccion($section, $scaletext, $profesores, $profesorindex, $coordinadora, NULL, NULL, $htmlcomments, $reporttype, $destinatario);
         echo $html;
     }
     echo '<div class="endreport"></div>';
 }
-function encuestascdc_dibuja_comentarios($sectioncomments, $profesor1, $profesor2, $profesor3, $coordinadora) {
+function encuestascdc_dibuja_comentarios($sectioncomments, $profesores, $profesorindex, $coordinadora) {
     $htmlcomments = '';
     foreach($sectioncomments as $question => $commentsarr) {
         $pregunta = $question;
         if(stripos($question, "Profesor 1") !== false) {
-            $pregunta = str_replace("Profesor 1", $profesor1, $pregunta);
+            $pregunta = str_replace("Profesor 1", $profesores[0], $pregunta);
         } elseif(stripos($question, "Profesor 2") !== false) {
-            $pregunta = str_replace("Profesor 2", $profesor2, $pregunta);
+            $pregunta = str_replace("Profesor 2", $profesores[1], $pregunta);
         } elseif(stripos($question, "Profesor 3") !== false) {
-            $pregunta = str_replace("Profesor 3", $profesor3, $pregunta);
+            $pregunta = str_replace("Profesor 3", $profesores[2], $pregunta);
         } elseif(stripos($question, "Coordinadora") !== false) {
             $pregunta = str_replace("Coordinadora", $coordinadora, $pregunta);
         }
@@ -630,16 +634,14 @@ function encuestascdc_dibuja_comentarios($sectioncomments, $profesor1, $profesor
         $htmlcomments .= "
         <div class='row'>
             <div class='col-md-12'>
-                <div class='preguntas'>
-                    <ul>
-                        <li>$pregunta</li>
-                    </ul>
+                <div class='preguntas pregunta-comentarios'>
+                    $pregunta
                 </div>
             </div>
             <div class='col-md-12'>
                 <textarea class='comentarios' rows=$numanswers disabled>$answers</textarea>
             </div>
-            <div class='col-md-12'>
+            <div class='col-md-12 sic'>
                 SIC: Así fue escrito.
             </div>
         </div>";
@@ -647,30 +649,25 @@ function encuestascdc_dibuja_comentarios($sectioncomments, $profesor1, $profesor
     return $htmlcomments;
 }
 
-function encuestascdc_dibuja_seccion($title, $subtitle, $profesor1, $profesor2, $profesor3, $coordinadora, $questions, $stats, $htmlcomments, $reporttype, $destinatario) {
-    if(!$sectionstats = $stats['bysection_average'][$title]) {
-        echo 'ERROR GRAVE: No hay stats para sección ' . $title;
-        die();
-    }    
+function encuestascdc_dibuja_seccion($title, $subtitle, $profesores, $profesorindex, $coordinadora, $questions, $stats, $htmlcomments, $reporttype, $destinatario) {
     $htmlteacher = '';
+    $originaltitle = $title;
     if(substr($title, 0, 24) === 'EVALUACIÓN DEL PROFESOR') {
+        $index = 0;
         $numprof = substr($title, -3);
         $title = substr($title, 0, 24);
         if($numprof === '-P1' || $numprof === 'SOR') {
-            $teacher = $profesor1;
-            if($profesor1 == NULL) {
-                return;
-            }
+            $teacher = $profesores[0];
+            $index = 1;
         } else if($numprof === '-P2' || $numprof === 'SOR') {
-            $teacher = $profesor2;
-            if($profesor2 == NULL) {
-                return;
-            }
+            $teacher = $profesores[1];
+            $index = 2;
         } else {
-            $teacher = $profesor3;
-            if($profesor3 == NULL) {
-                return;
-            }
+            $teacher = $profesores[2];
+            $index = 3;
+        }
+        if($profesorindex > 0 && $profesorindex !== $index) {
+            return '';
         }
         $htmlteacher = "
         <div class='row'>
@@ -681,6 +678,10 @@ function encuestascdc_dibuja_seccion($title, $subtitle, $profesor1, $profesor2, 
     $htmlquestions = '';
     if($destinatario === 'client') {
         if($questions && $stats) {
+            if(!$sectionstats = $stats['bysection_average'][$originaltitle]) {
+                echo 'ERROR GRAVE: No hay stats para sección ' . $originaltitle;
+                die();
+            }    
             foreach($questions as $q) {
                 $htmlquestions .= '<li>' . substr($q['pregunta'], 3) . '</li>';
             }
@@ -1022,8 +1023,8 @@ function local_encuestascdc_util_mes_en_a_es($fecha, $corta = false) {
     return $fecha;
 }
 
-function encuestascdc_dibuja_portada($questionnaire, $group, $profesor1, $profesor2, $profesor3, $asignatura, $empresa, $tasa, $programa, $destinatario, $coordinadora, $totalestudiantes) {
-    global $OUTPUT;
+function encuestascdc_dibuja_portada($questionnaire, $group, $profesores, $profesorindex, $asignatura, $empresa, $tasa, $programa, $destinatario, $coordinadora, $totalestudiantes) {
+    global $OUTPUT, $NOMBRES_DESTINATARIOS;
     
     // Se muestra la primera página con información del informe y general
     $portada = html_writer::start_div('primera-pagina');
@@ -1031,10 +1032,9 @@ function encuestascdc_dibuja_portada($questionnaire, $group, $profesor1, $profes
     $portada .= html_writer::div("<img width=396 height='auto' src='img/logo-uai-corporate-no-transparente2.png'>", "uai-corporate-logo");
     $portada .= html_writer::end_div();
     
-    $portada .= $OUTPUT->heading('Encuesta de Satisfacción de Programas Corporativos', 1, array('class'=>'reporte_titulo'));
+    $destinatarionombre = isset($NOMBRES_DESTINATARIOS[$destinatario]) ? $NOMBRES_DESTINATARIOS[$destinatario] : '';
+    $portada .= html_writer::div('Encuesta de Satisfacción de Programas Corporativos ' . $destinatarionombre,  'reporte_titulo col-md-12 text-center');
 
-    $portada .= html_writer::div('Informe de resultados', 'subtitulo');
-    
     $fecharealizacion = local_encuestascdc_util_mes_en_a_es(date('d F Y', $questionnaire->opendate));
     
     $htmlgrupo = '';
@@ -1048,17 +1048,6 @@ function encuestascdc_dibuja_portada($questionnaire, $group, $profesor1, $profes
             <td class='portada-valor'>: $groupobj->name</td>
         </tr>";    
     }
-    
-    $htmlprofesor2 = $profesor2 === '' ? '' : "<tr>
-        <td class='portada-item'>Profesor 2</td>
-        <td class='portada-valor'>: $profesor2</td>
-    </tr>
-    ";
-    $htmlprofesor3 = $profesor3 === '' ? '' : "<tr>
-        <td class='portada-item'>Profesor 3</td>
-        <td class='portada-valor'>: $profesor3</td>
-    </tr>
-    ";
     $portada .= "
     <table class='portada'>
     <tr>
@@ -1080,19 +1069,22 @@ function encuestascdc_dibuja_portada($questionnaire, $group, $profesor1, $profes
     </tr>";
     if($destinatario === 'program-director' || $destinatario === 'teacher') {
         if($destinatario === 'teacher') {
+            $profesor = $profesores[$profesorindex-1];
             $portada .= "
             <tr>    
                 <td class='portada-item'>Profesor</td>
-                <td class='portada-valor'>: $profesor1</td>
+                <td class='portada-valor'>: $profesor</td>
             </tr>";
         } else {
-            $portada .= "
-                <tr>    
-                    <td class='portada-item'>Profesor 1</td>
-                    <td class='portada-valor'>: $profesor1</td>
-                </tr>
-                $htmlprofesor2
-                $htmlprofesor3";
+            $i=1;
+            foreach($profesores as $profesor) {
+                $portada .= "
+                    <tr>    
+                        <td class='portada-item'>Profesor $i</td>
+                        <td class='portada-valor'>: $profesor</td>
+                    </tr>";
+                    $i++;
+            }
         }
     }
     $portada .= "

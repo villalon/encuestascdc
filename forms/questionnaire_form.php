@@ -127,17 +127,13 @@ class local_encuestascdc_questionnaire_form extends moodleform
                 var profesor1 = document.getElementById('id_profesor1');
                 var profesor2 = document.getElementById('id_profesor2');
                 var profesor3 = document.getElementById('id_profesor3');
-                if(profesoresNombres[0] !== undefined) {
+                if(profesoresNombres[0] !== undefined && profesoresNombres[0].length > 0 && profesoresNombres[0] !== 'n.a.') {
                     profesor1.value = profesoresNombres[0];
-                    if(profesoresNombres[1] !== undefined) {
+                    if(profesoresNombres[1] !== undefined && profesoresNombres[1].length > 0 && profesoresNombres[1] !== 'n.a.') {
                         profesor2.value = profesoresNombres[1];
-                    } else {
-                        profesor2.value = '';
-                    }
-                    if(profesoresNombres[2] !== undefined) {
-                        profesor3.value = profesoresNombres[2];
-                    } else {
-                        profesor3.value = '';
+                        if(profesoresNombres[2] !== undefined && profesoresNombres[2].length > 0 && profesoresNombres[2] !== 'n.a.') {
+                            profesor3.value = profesoresNombres[2];
+                        }
                     }
                 }
             }

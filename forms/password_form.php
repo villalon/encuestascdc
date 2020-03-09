@@ -33,7 +33,7 @@ class local_encuestascdc_password_form extends moodleform {
 		$mform->addElement('select', 'categoryid', 'Categoría de validez', $choices);
 		$mform->setType('categoryid', PARAM_INT);
 		
-		$durations = Array(10=>"10 minutos", 20=>"20 minutos", 30=>"30 minutos");
+		$durations = Array(10=>"10 minutos", 20=>"20 minutos", 30=>"30 minutos", 1440=>"24 horas", 2880=>"48 horas");
 		$mform->addElement('select', 'duration', 'Duración', $durations);
 		$mform->setType('duration', PARAM_INT);
 		

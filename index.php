@@ -144,24 +144,17 @@ if($tiporeporte === 'course') {
     // Se obtienen los gráficos y las secciones de la encuesta
     $coursestats = $statsbycourse_average[0];
     if($destinatario === 'teacher') {
-        if(count($teachers) > 0) {
-            encuestascdc_dibuja_portada($questionnaire, $group, $profesor1, NULL, NULL, $asignatura, $empresa, $coursestats['RATIO'], $programa, $destinatario, $coordinadora, $coursestats['ENROLLEDSTUDENTS']);
-            encuestascdc_dibujar_reporte($stats, $profesor1, NULL, NULL, $coordinadora, $tiporeporte, $destinatario);
-        }
-        if(count($teachers) > 1) {
-            encuestascdc_dibuja_portada($questionnaire, $group, NULL, $profesor2, NULL, $asignatura, $empresa, $coursestats['RATIO'], $programa, $destinatario, $coordinadora, $coursestats['ENROLLEDSTUDENTS']);
-            encuestascdc_dibujar_reporte($stats, NULL, $profesor2, NULL, $coordinadora, $tiporeporte, $destinatario);
-        }
-        if(count($teachers) > 2) {
-            encuestascdc_dibuja_portada($questionnaire, $group, NULL, NULL, $profesor3, $asignatura, $empresa, $coursestats['RATIO'], $programa, $destinatario, $coordinadora, $coursestats['ENROLLEDSTUDENTS']);
-            encuestascdc_dibujar_reporte($stats, NULL, NULL, $profesor3, $coordinadora, $tiporeporte, $destinatario);
+        for($i=1;$i<count($teachers)+1;$i++) {
+            encuestascdc_dibuja_portada($questionnaire, $group, $teachers, $i, $asignatura, $empresa, $coursestats['RATIO'], $programa, $destinatario, $coordinadora, $coursestats['ENROLLEDSTUDENTS']);
+            encuestascdc_dibujar_reporte($stats, $teachers, $i, $coordinadora, $tiporeporte, $destinatario);
+            echo '<hr>';
         }
     } else if($destinatario === 'program-director') {
-        encuestascdc_dibuja_portada($questionnaire, $group, $profesor1, $profesor2, $profesor3, $asignatura, $empresa, $coursestats['RATIO'], $programa, $destinatario, $coordinadora, $coursestats['ENROLLEDSTUDENTS']);
-        encuestascdc_dibujar_reporte($stats, $profesor1, $profesor2, $profesor3, $coordinadora, $tiporeporte, $destinatario);
+        encuestascdc_dibuja_portada($questionnaire, $group, $teachers, 0, $asignatura, $empresa, $coursestats['RATIO'], $programa, $destinatario, $coordinadora, $coursestats['ENROLLEDSTUDENTS']);
+        encuestascdc_dibujar_reporte($stats, $teachers, 0, $coordinadora, $tiporeporte, $destinatario);
     } else {
-        encuestascdc_dibuja_portada($questionnaire, $group, $profesor1, $profesor2, $profesor3, $asignatura, $empresa, $coursestats['RATIO'], $programa, $destinatario, $coordinadora, $coursestats['ENROLLEDSTUDENTS']);
-        encuestascdc_dibujar_reporte($stats, $profesor1, $profesor2, $profesor3, $coordinadora, $tiporeporte, $destinatario);
+        encuestascdc_dibuja_portada($questionnaire, $group, $teachers, 0, $asignatura, $empresa, $coursestats['RATIO'], $programa, $destinatario, $coordinadora, $coursestats['ENROLLEDSTUDENTS']);
+        encuestascdc_dibujar_reporte($stats, $teachers, 0, $coordinadora, $tiporeporte, $destinatario);
     }
 } elseif($tiporeporte === 'program') {
     echo '<div style=" resize: both; "><pre>' . print_r($teachers, true) . '</pre></div>';
@@ -179,7 +172,6 @@ if($tiporeporte === 'course') {
     echo '<div style=" resize: both; "><pre>' . print_r($stats, true) . '</pre></div>';
     echo '<hr>';
 } else {
-    var_dump($tiporeporte);
     echo $OUTPUT->notification('ERROR! Tipo de reporte inválido', 'notifyproblem');
 }
 // Footer de la página

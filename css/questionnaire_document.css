@@ -127,12 +127,20 @@ table.datos td {
 .resultados {
     display: flex;
 }
+.sic {
+    margin-top: 3px;
+    font-size: 0.8em;
+}
 .row-questions {
     display: flex;
     flex-wrap: wrap;
 }
 .preguntas {
     width: 100%;
+}
+.pregunta-comentarios {
+    font-weight: bold;
+    margin-top: 1em;
 }
 .trgrafico {
     display:none;
@@ -194,6 +202,7 @@ table.datos td {
 .primera-pagina {
     background-color: #fff;
     color: #000;
+    display: grid;
 }
 .subtitulo {
 	display: none;
