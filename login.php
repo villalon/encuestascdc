@@ -33,23 +33,41 @@ $mform = new local_encuestascdc_login_form (NULL);
 
 $loginerror = false;
 if ($mform->get_data ()) {
-    $username = $mform->get_data()->username;
-    $username = str_replace(".", "", $username);
+	// Datos del formulario
+    $tipo = $mform->get_data()->tipo;
+    $username = isset($mform->get_data()->username) ? $mform->get_data()->username : '';
+    $idnumber = isset($mform->get_data()->idnumber) ? $mform->get_data()->idnumber : '';
     $pwd = $mform->get_data()->pwd;
 
-	$usernamesindigito = explode("-", $mform->get_data ()->username)[0];
-	$usernamesindigito = intval(str_replace(".", "", $usernamesindigito));
+	// Reemplazar puntos en el RUT
+    $idnumber = strlen($idnumber) > 0 ? str_replace(".", "", $idnumber) : '';
+	$idnumbersindigito = strpos($idnumber, '-') > 0 ? intval(explode("-", $idnumber)[0]) : $idnumber;
 	
-	$user = $DB->get_record ( 'user', array (
-			'idnumber' => $username 
-	),'*',IGNORE_MULTIPLE );
-
-	if(!$user) {
-	    $loginerror = 'Estudiante no encontrado';
+	$user = NULL;
+	if($tipo == 2) {
+		$params = array ('username' => $username, 'deleted' => 0);
+	} else if($tipo == 1) {
+		$params = array ('idnumber' => $idnumber, 'deleted' => 0);
+	}
+	$users = $DB->get_records ('user', $params);
+	if(count($users) > 1) {
+		$loginerror = 'Hay más de un estudiante con ese RUT o pasaporte. Contacte a su coordinadora.';
 	} else {
+		foreach($users as $u) {
+			$user = $u;
+		}
+	}
+
+	// Primero verificamos que el usuario exista
+	if(!$user) {
+	    $loginerror = $loginerror ? $loginerror : 'Estudiante no encontrado';
+	} else if($user->suspended == 1) {
+	    $loginerror = 'Estudiante suspendido';
+	} else {
+		// Si el usuario existe, autenticamos con la clave provista
 		$result = authenticate_user_login ($user->username, $pwd);
+		// Si no funciona su clave, se busca una clave temporal habilitada para contestar encuestas
 		if(!$result) {
-//			$categoryids = substr(implode(',',explode('/',$coursecat->path)),1);
 			$now = time();
 			$passwords = $DB->get_records_sql("SELECT * FROM {encuestascdc_passwords} ep WHERE timecreated < :now AND timecreated + (duration * 60) > :now2 AND status = 0 AND password = :password",
 				array('now'=>$now, 'now2'=>$now, 'password'=>$pwd));
