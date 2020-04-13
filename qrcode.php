@@ -16,7 +16,7 @@ require_once ('../../mod/questionnaire/locallib.php');
 // Contexto página principal
 $frontpagecontext = context_course::instance(SITEID);
 // Editar la página principal solo lo pueden hacer gestores y administradores (esto permite filtrar a gestores)
-require_capability('moodle/course:update', $frontpagecontext);
+// require_capability('moodle/course:update', $frontpagecontext);
 // Contexto de sistema
 $context = context_system::instance ();
 

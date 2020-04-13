@@ -1,0 +1,6 @@
+#!/bin/bash
+
+cd /home/ubuntu/environment/jorge/mp/
+git add .
+git commit -m "Autocommit from Cloud9"
+git push
