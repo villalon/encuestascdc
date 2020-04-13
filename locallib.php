@@ -705,6 +705,13 @@ function encuestascdc_dibuja_seccion($title, $subtitle, $profesores, $profesorin
         if($questions && $stats) {
             $i=0;
             foreach($questions as $q) {
+                $index = 0;
+                if(strpos($q['pregunta'], 'Profesor/Facilitador') > 0) {
+                    $index = intval(substr($q['pregunta'], -1));
+                    if($profesorindex > 0 && $profesorindex !== $index) {
+                        continue;
+                    }
+                }
                 $circulos = uol_tabla_distribucion_respuestas($q, $i == 0);
                 $htmlquestions .= '<tr><td class="titulografico">' . substr($q['pregunta'], 3) . '</td><td class="datos">' . $circulos . '</td></tr>';
                 $i++;
