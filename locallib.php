@@ -29,7 +29,7 @@
      );
  /**
  * Obtiene los gráficos de preguntas tipo rank de la encuesta
- * 
+ *
  * @param int $questionnaireid id de la encuesta
  * @param int $moduleid id del módulo questionnaire
  * @param int $typerankid id del tipo de pregunta rank
@@ -38,7 +38,7 @@
  */
 function encuestascdc_grafico_encuesta_rank(array $questionnaires, $profesor1, $profesor2, $profesor3, $coordinadora, int $totalalumnos, int $groupid = 0) {
     global $DB, $OUTPUT, $CFG;
-    
+
     $respuestasstats = encuestascdc_obtiene_estadisticas($questionnaires, $groupid);
     $respuestas = array();
     foreach($respuestasstats as $k => $v) {
@@ -65,7 +65,7 @@ function encuestascdc_grafico_encuesta_rank(array $questionnaires, $profesor1, $
     if(count($respuestas) == 0) {
         return array("", array(), 0);
     }
-    
+
     $profesores = 0;
     $nuevaseccion = false;
     $estadisticas_seccion = null;
@@ -103,11 +103,11 @@ function encuestascdc_grafico_encuesta_rank(array $questionnaires, $profesor1, $
             $secciones[] = $ultimaseccion;
             // Estadísticas de la sección, al llamar con NULL se inicializa en 0.
             $estadisticas_seccion = uol_actualiza_estadisticas(null);
-            
+
             // Se agregar un break vacío
             //$fullhtml .= "<div class='break-after'></div>";
             $fullhtml .= "<div class='multicol cols-2 seccioncompleta'>";
-            
+
             // Partimos con un break antes del título y el título
             if($respuesta->type === "Rate (scale 1..5)") {
                 if($respuesta->length == 4) {
@@ -204,7 +204,7 @@ function encuestascdc_grafico_encuesta_rank(array $questionnaires, $profesor1, $
  */
  /**
  * Obtiene los gráficos de preguntas tipo rank de la encuesta
- * 
+ *
  * @param int $questionnaireid id de la encuesta
  * @param int $moduleid id del módulo questionnaire
  * @param int $typerankid id del tipo de pregunta rank
@@ -213,7 +213,7 @@ function encuestascdc_grafico_encuesta_rank(array $questionnaires, $profesor1, $
  */
 function encuestascdc_obtiene_estadisticas(array $questionnaires, int $groupid = 0) {
     global $DB, $OUTPUT, $CFG;
-    
+
     // Validación de instalación del módulo questionnaire
     if(!$module = $DB->get_record('modules', array('name'=>'questionnaire'))) {
         print_error('Módulo questionnaire no está instalado');
@@ -223,7 +223,7 @@ function encuestascdc_obtiene_estadisticas(array $questionnaires, int $groupid =
     if(!$questiontype = $DB->get_record('questionnaire_question_type', array('response_table'=>'response_rank'))) {
     	print_error('Tipo de pregunta rank no instalada');
     }
-    
+
     // Validación de tipo de respuesta texto
     if(!$questiontypetext = $DB->get_record('questionnaire_question_type', array('response_table'=>'response_text', 'type'=>'Text Box'))) {
         print_error('Tipo de pregunta Text Box no instalada');
@@ -231,11 +231,11 @@ function encuestascdc_obtiene_estadisticas(array $questionnaires, int $groupid =
 
     $totalalumnos = 0;
     $pluginversion = intval(get_config('mod_questionnaire', 'version'));
-    $rankfield = $pluginversion > 2018050109 ? '' : 'value';
-    $surveyfield = $pluginversion > 2018050109 ? 'survey_id' : 'surveyid';
-    $responseonclause = $pluginversion > 2018050109 ? 'r.survey_id = s.id' : 'r.questionnaireid = qu.id';
+    $rankfield = 'value'; // $pluginversion > 2018050109 ? '' : 'value';
+    $surveyfield = 'surveyid'; // $pluginversion > 2018050109 ? 'survey_id' : 'surveyid';
+    $responseonclause =  'r.questionnaireid = qu.id'; //  $pluginversion > 2018050109 ? 'r.survey_id = s.id' : 'r.questionnaireid = qu.id';
     $groupsql = $groupid > 0 ? "LEFT JOIN {groups_members} gm ON (gm.groupid = :groupid AND gm.userid = r.userid)
-WHERE gm.groupid is not null" : ""; 
+WHERE gm.groupid is not null" : "";
     $groupsql2 = $groupid > 0 ? "LEFT JOIN {groups_members} gm ON (gm.groupid = :groupid2 AND gm.userid = r.userid)
 WHERE gm.groupid is not null" : "";
 
@@ -250,12 +250,12 @@ WHERE gm.groupid is not null" : "";
 SELECT qu.id,
     c.id courseid,
 	c.fullname,
-	s.id surveyid, 
-	s.title nombre, 
-	q.name seccion, 
-	q.content pregunta, 
-	qc.content opcion, 
-	q.length, 
+	s.id surveyid,
+	s.title nombre,
+	q.name seccion,
+	q.content pregunta,
+	qc.content opcion,
+	q.length,
 	group_concat(rr.rank$rankfield order by r.userid separator '#') answers,
 	group_concat(r.userid order by r.userid separator '#') respondents,
     q.position,
@@ -276,9 +276,9 @@ UNION ALL
 SELECT qu.id,
     c.id courseid,
 	c.fullname,
-	s.id surveyid, 
-	s.title nombre, 
-	q.name seccion, 
+	s.id surveyid,
+	s.title nombre,
+	q.name seccion,
 	q.content pregunta,
     '' opcion,
     '' length,
@@ -298,7 +298,7 @@ FROM
     $groupsql2
 GROUP BY qu.id,c.id,s.id, q.id
 ORDER BY position";
-    
+
     $params = $inparams;
     $params[] = $module->id;
     $params[] = $questiontype->typeid;
@@ -308,7 +308,7 @@ ORDER BY position";
     }
     $params[] = $module->id;
     $params[] = $questiontypetext->typeid;
-    
+
     if($groupid > 0) {
         $params['groupid'] = $groupid;
         $params['groupid2'] = $groupid;
@@ -316,11 +316,11 @@ ORDER BY position";
 
     // Todas las respuestas
     $respuestas = $DB->get_recordset_sql($sql, $params);
-    
+
     if(!$respuestas->valid()) {
         return false;
     }
-    
+
     // Arreglo con los nombres de secciones
     $secciones = array();
     // Variable con la última sección utilizada, para identificar cambio de sección
@@ -347,17 +347,17 @@ ORDER BY position";
         if(!isset($stats[$respuesta->courseid])) {
             $stats[$respuesta->courseid] = array();
         }
-        
+
         if(!isset($stats[$respuesta->courseid][$respuesta->seccion])) {
             $stats[$respuesta->courseid][$respuesta->seccion] = array();
         }
-        
+
         if(!isset($stats[$respuesta->courseid][$respuesta->seccion][$respuesta->type])) {
             $stats[$respuesta->courseid][$respuesta->seccion][$respuesta->type] = array();
         }
-        
+
         $stat = encuestascdc_respuesta_stats($respuesta);
-        
+
         $stats[$respuesta->courseid][$respuesta->seccion][$respuesta->type][] = array('stats'=>$stat, 'respuesta'=>$respuesta, 'group'=>$groupid);
     }
     // Se retorna el html de gráficos y a lista de secciones
@@ -505,15 +505,15 @@ function uol_actualiza_estadisticas($estadisticas_nuevas, $estadisticas = NULL) 
     if($estadisticas_nuevas == NULL) {
         return $estadisticas_seccion;
     }
-    
+
     $estadisticas_seccion->min = $estadisticas->min == 0 ? $estadisticas_nuevas->promedio : min($estadisticas->min,$estadisticas_nuevas->min);
     $estadisticas_seccion->max = max($estadisticas->max,$estadisticas_nuevas->max);
     $estadisticas_seccion->numrespuestas = $estadisticas->numrespuestas + $estadisticas_nuevas->numrespuestas;
-    $estadisticas_seccion->promedio = 
-        ($estadisticas->promedio * $estadisticas->numrespuestas + 
+    $estadisticas_seccion->promedio =
+        ($estadisticas->promedio * $estadisticas->numrespuestas +
         $estadisticas_nuevas->promedio * $estadisticas_nuevas->numrespuestas)
         / ($estadisticas->numrespuestas + $estadisticas_nuevas->numrespuestas);
-        
+
     return $estadisticas_seccion;
 }
 function uol_tabla_estadisticas($estadisticas) {
@@ -530,14 +530,14 @@ function uol_tabla_estadisticas($estadisticas) {
 }
 /**
  * Crea una tabla con contenidos dada una lista de secciones. Puede marcar una sección como la activa.
- * 
+ *
  * @param array $secciones
  * @param int $activo
  * @return string
  */
 function uol_tabla_contenidos(array $secciones, int $activo) {
     global $OUTPUT;
-    
+
     $output = '';
     $output .= html_writer::start_div('navegacion');
     $output .= $OUTPUT->heading('Contenido', 1, 'break-before');
@@ -681,7 +681,7 @@ function encuestascdc_dibuja_seccion($title, $subtitle, $profesores, $profesorin
             if(!$sectionstats = $stats['bysection_average'][$originaltitle]) {
                 echo 'ERROR GRAVE: No hay stats para sección ' . $originaltitle;
                 die();
-            }    
+            }
             foreach($questions as $q) {
                 $htmlquestions .= '<li>' . substr($q['pregunta'], 3) . '</li>';
             }
@@ -779,7 +779,7 @@ function encuestascdc_respuesta_stats($respuesta) {
     if($total - $totalna > 0) {
         $promedio = round($promedio / ($total - $totalna),1);
     }
-    
+
     $max = 0;
     $min = 0;
     foreach($values as $idx => $val) {
@@ -810,7 +810,7 @@ function encuestascdc_respuesta_stats($respuesta) {
     $output->total = $total;
     $output->totalna = $totalna;
     $output->respondents = $respondents;
-    
+
     return $output;
 }
 function uol_tabla_distribucion_respuestas($respuesta, $header = true) {
@@ -888,8 +888,8 @@ function uol_tabla_respuesta_rank($respuesta, $header = false) {
         10 => "35B951",
         11 => "33B26F"
     );
-    
-    
+
+
     // Todas las respuestas, indicando qué rank escogió de entre 0 y length - 1
     $ranks = explode('#', $respuesta->answers);
     // Totales de respuestas por cada rank
@@ -928,7 +928,7 @@ function uol_tabla_respuesta_rank($respuesta, $header = false) {
     if($total - $totalna > 0) {
         $promedio = round($promedio / ($total - $totalna),1);
     }
-    
+
     // Resumen de promedio y número respuestas
     $resumenhtml = '<div class="promedio">' . $promedio . '</div><div class="numrespuestas hyphenate">Nº respuestas: ' . $total . '</div>';
     $htmlpromedio = '<div class="promedio">' . $promedio . '</div>';
@@ -986,7 +986,7 @@ function uol_tabla_respuesta_rank($respuesta, $header = false) {
         $nivel++;
     }
     $tablahtml .= '<td style="width:20%" class="promedio">'.$promedio.'</td></tr></table>';
-    
+
     // Crea chart
     /*        ### Con esto saco frecuencias fácilmente
      $vals = array_values($values);
@@ -1032,28 +1032,28 @@ function local_encuestascdc_util_mes_en_a_es($fecha, $corta = false) {
 
 function encuestascdc_dibuja_portada($questionnaire, $group, $profesores, $profesorindex, $asignatura, $empresa, $tasa, $programa, $destinatario, $coordinadora, $totalestudiantes) {
     global $OUTPUT, $NOMBRES_DESTINATARIOS;
-    
+
     // Se muestra la primera página con información del informe y general
     $portada = html_writer::start_div('primera-pagina');
     $portada .= html_writer::start_div('logos');
     $portada .= html_writer::div("<img width=396 height='auto' src='img/logo-uai-corporate-no-transparente2.png'>", "uai-corporate-logo");
     $portada .= html_writer::end_div();
-    
+
     $destinatarionombre = isset($NOMBRES_DESTINATARIOS[$destinatario]) ? $NOMBRES_DESTINATARIOS[$destinatario] : '';
     $portada .= html_writer::div('Encuesta de Satisfacción de Programas Corporativos ' . $destinatarionombre,  'reporte_titulo col-md-12 text-center');
 
     $fecharealizacion = local_encuestascdc_util_mes_en_a_es(date('d F Y', $questionnaire->opendate));
-    
+
     $htmlgrupo = '';
     if($group > 0) {
         if(!$groupobj = $DB->get_record('groups', array('id'=>$group))) {
             print_error('Invalid group');
         }
-        
+
         $htmlgrupo = "<tr>
             <td class='portada-item'>Grupo</td>
             <td class='portada-valor'>: $groupobj->name</td>
-        </tr>";    
+        </tr>";
     }
     $portada .= "
     <table class='portada'>
@@ -1078,7 +1078,7 @@ function encuestascdc_dibuja_portada($questionnaire, $group, $profesores, $profe
         if($destinatario === 'teacher') {
             $profesor = $profesores[$profesorindex-1];
             $portada .= "
-            <tr>    
+            <tr>
                 <td class='portada-item'>Profesor</td>
                 <td class='portada-valor'>: $profesor</td>
             </tr>";
@@ -1086,7 +1086,7 @@ function encuestascdc_dibuja_portada($questionnaire, $group, $profesores, $profe
             $i=1;
             foreach($profesores as $profesor) {
                 $portada .= "
-                    <tr>    
+                    <tr>
                         <td class='portada-item'>Profesor $i</td>
                         <td class='portada-valor'>: $profesor</td>
                     </tr>";
@@ -1110,6 +1110,6 @@ function encuestascdc_dibuja_portada($questionnaire, $group, $profesores, $profe
     </table>
     ";
     $portada .= html_writer::end_div();
-    
+
     echo $portada;
 }

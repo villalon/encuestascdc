@@ -46,16 +46,6 @@ echo '
 }
 </style>';
 
-$title = 'QR acceso encuestas Corporate';
-$url = 'https://cdc.uai.cl/local/encuestascdc/login.php';
-$imgurl = $CFG->wwwroot . '/local/encuestascdc/img/cdc-qr-encuestas.png';
-
-echo html_writer::start_div('qrcodes');
-echo html_writer::start_div('qr');
-echo $OUTPUT->heading($title, 3);
-echo '<a href="'.$url.'"><img src="' . $imgurl . '" /></a>';
-echo html_writer::end_div();
-
 $title = 'QR acceso encuestas UAI Online';
 $url = 'https://online.uai.cl/local/encuestascdc/login.php';
 $imgurl = $CFG->wwwroot . '/local/encuestascdc/img/uol-qr-encuestas.png';
