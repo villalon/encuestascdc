@@ -763,7 +763,7 @@ function encuestascdc_respuesta_stats($respuesta) {
         // Cuenta cuántos valores de dicho rank hay. Recorre todas las respuestas
         for($j=0;$j<count($ranks);$j++) {
             // Si la respuesta corresponde al rank
-            if($ranks[$j] == $i) {
+            if($ranks[$j] == $i+1) {
                 // Suma a valores NA o al valor
                 if($i<0) {
                     $valuesna++;
@@ -783,18 +783,18 @@ function encuestascdc_respuesta_stats($respuesta) {
     $max = 0;
     $min = 0;
     foreach($values as $idx => $val) {
-        if($val > 0) {
-            $max = $idx;
-            $min = $idx;
+        if($idx > 0) {
+            $max = $val;
+            $min = $val;
             break;
         }
     }
     foreach($values as $idx => $val) {
-        if($idx > $max && $val > 0) {
-            $max = $idx;
+        if($val > $max && $idx > 0) {
+            $max = $val;
         }
-        if($idx < $min && $val > 0) {
-            $min = $idx;
+        if($idx < $min && $idx > 0) {
+            $min = $val;
         }
     }
     $respondents = explode('#', $respuesta->respondents);

@@ -16,7 +16,7 @@ require_once ('../../mod/questionnaire/locallib.php');
 // Contexto página principal
 $frontpagecontext = context_course::instance(SITEID);
 // Editar la página principal solo lo pueden hacer gestores y administradores (esto permite filtrar a gestores)
-require_capability('moodle/course:update', $frontpagecontext);
+// require_capability('moodle/course:update', $frontpagecontext);
 // Contexto de sistema
 $context = context_system::instance ();
 
@@ -45,15 +45,15 @@ echo $OUTPUT->heading ('Contraseñas de encuestas');
 
 if($action === 'view') {
 	$passwords = $DB->get_records_sql("
-		SELECT ep.*, 
-			u.firstname, 
+		SELECT ep.*,
+			u.firstname,
 			u.lastname,
 			cc.name AS categoryname
-		FROM {encuestascdc_passwords} ep 
-		INNER JOIN {user} u ON (u.id = ep.userid) 
-		LEFT JOIN {course_categories} cc ON (cc.id = ep.categoryid) 
+		FROM {encuestascdc_passwords} ep
+		INNER JOIN {user} u ON (u.id = ep.userid)
+		LEFT JOIN {course_categories} cc ON (cc.id = ep.categoryid)
 		ORDER BY ep.timecreated DESC");
-	
+
 	// Creating list.
 	$table = new html_table();
 	$table->head = array(
@@ -64,7 +64,7 @@ if($action === 'view') {
 		'Status',
 		'Acciones'
 	);
-	
+
 	$totalpasswords = 0;
 	foreach($passwords as $passw) {
 		$categoryurl = new moodle_url('/course/index.php', array('categoryid'=>$passw->categoryid));
@@ -86,7 +86,7 @@ if($action === 'view') {
 		);
 		$totalpasswords++;
 	}
-	
+
 	if($totalpasswords == 0) {
 		echo $OUTPUT->notification('No hay constraseñas de encuestas aún');
 	} else {
