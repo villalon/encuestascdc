@@ -282,8 +282,8 @@ SELECT qu.id,
 	q.content pregunta,
     '' opcion,
     '' length,
-    group_concat(rt.response order by r.userid separator '#') answers,
-    group_concat(r.userid order by r.userid separator '#') answers,
+    group_concat(rt.id order by r.userid separator '#') answers,
+    group_concat(r.userid order by r.userid separator '#') respondents,
     q.position,
     qt.type
 FROM
@@ -358,10 +358,14 @@ ORDER BY position";
 
         $stat = encuestascdc_respuesta_stats($respuesta);
 
+
         $stats[$respuesta->courseid][$respuesta->seccion][$respuesta->type][] = array('stats'=>$stat, 'respuesta'=>$respuesta, 'group'=>$groupid);
     }
+
+
     // Se retorna el html de gráficos y a lista de secciones
     return $stats;
+
 }
 
 function encuestascdc_obtiene_profesores($stats, $profesor1, $profesor2, $profesor3) {
@@ -589,7 +593,7 @@ function encuestascdc_dibujar_reporte($stats, $profesores, $profesorindex, $coor
         }
         $sectioncomments = false;
         if(isset($stats['bysection_comments'][$section])) {
-            $sectioncomments = $stats['bysection_comments'][$section];
+            $sectioncomqments = $stats['bysection_comments'][$section];
         }
         $htmlcomments = '';
         if($sectioncomments) {
@@ -616,6 +620,7 @@ function encuestascdc_dibujar_reporte($stats, $profesores, $profesorindex, $coor
     echo '<div class="endreport"></div>';
 }
 function encuestascdc_dibuja_comentarios($sectioncomments, $profesores, $profesorindex, $coordinadora) {
+    global $DB;
     $htmlcomments = '';
     foreach($sectioncomments as $question => $commentsarr) {
         $pregunta = $question;
@@ -629,7 +634,14 @@ function encuestascdc_dibuja_comentarios($sectioncomments, $profesores, $profeso
             $pregunta = str_replace("Coordinadora", $coordinadora, $pregunta);
         }
         $numanswers = count($commentsarr);
-        $answers = "- " . implode(" (sic) \n- ", $commentsarr) . " (SIC)";
+
+        $respuestas=array();
+        foreach($commentsarr as $comment) {
+            $respuesta = $DB->get_record('questionnaire_response_text',array('id' => $comment));
+            $respuestas[] = $respuesta->response;
+        }
+
+        $answers = "- " . implode(" (sic) \n- ", $respuestas) . " (SIC)";
         $answers = strtoupper(str_replace(array('á','é','í','ó','ú','ñ'), array('Á','É','Í','Ó','Ú','Ñ'), $answers));
         $htmlcomments .= "
         <div class='row'>

@@ -21,6 +21,7 @@
  * @author Jorge Villalón <jorge.villalon@uai.cl>
  * @copyright 2018 Universidad Adolfo Ibáñez
  */
+
 require_once (dirname(dirname(dirname(__FILE__))) . '/config.php');
 require_once ('forms/questionnaire_form.php');
 require_once ('lib.php');
@@ -132,6 +133,7 @@ if($layout) {
     echo '</style>';
 }
 $stats = encuestascdc_obtiene_estadisticas($questionnaires);
+
 $teachers = encuestascdc_obtiene_profesores($stats, $profesor1, $profesor2, $profesor3);
 list($statsbycourse_average, $statsbycourse_comments) = encuestascdc_obtiene_estadisticas_por_curso($stats);
 list($statsbysection_average, $statsbysection_questions, $statsbysection_comments) = encuestascdc_obtiene_estadisticas_por_seccion($stats);
