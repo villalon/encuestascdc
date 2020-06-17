@@ -30,14 +30,14 @@ class local_encuestascdc_questionnaire_form extends moodleform
     public function definition()
     {
         global $DB, $CFG;
-        
+
         $mform = $this->_form;
         $instance = $this->_customdata;
         $courseid = $instance["course"];
         $teachers = $instance["teachers"];
         $managers = $instance["managers"];
         $categories = $instance["categories"];
-        
+
         // Validación de instalación del módulo questionnaire
         if(!$module = $DB->get_record('modules', array('name'=>'questionnaire'))) {
             print_error('Módulo questionnaire no está instalado');
@@ -66,7 +66,7 @@ class local_encuestascdc_questionnaire_form extends moodleform
             if(!$coursecat = $DB->get_record('course_categories', array('id'=>$course->category))) {
                 print_error("Curso con categoría inválida");
             }
-            
+
             $groups = $DB->get_records_sql_menu('
         SELECT id, name
         FROM {groups} g
@@ -140,37 +140,42 @@ class local_encuestascdc_questionnaire_form extends moodleform
             </script>
             ";
             $mform->addElement('html', $extrajs);
-            
+
             $attributes=array('size'=>'20', 'onchange'=>'refrescaProfesores(this)');
             $formselect = $mform->addElement('select', 'mqid', get_string('questionnaire', 'local_encuestascdc'), $select, $attributes);
             $mform->addHelpButton('mqid', 'questionnaire', 'local_encuestascdc');
             $formselect->setMultiple('mqid', true);
             $mform->hideIf('mqid', 'reporttype', 'neq', 'program');
-            
+
             $select = array();
             $select[''] = get_string('selectquestionnaire', 'local_encuestascdc');
             foreach ($questionnaires as $questionnaire) {
                 $select[$questionnaire->id] = $questionnaire->section . '-' . $questionnaire->name . '-' . date('d M Y H:m', $questionnaire->opendate);
             }
-            
+
             $formselect = $mform->addElement('select', 'qid', get_string('questionnaire', 'local_encuestascdc'), $select, $attributes);
             $mform->addHelpButton('qid', 'questionnaire', 'local_encuestascdc');
             $mform->hideIf('qid', 'reporttype', 'neq', 'course');
             $mform->setDefault('qid', '');
-            
+
+
+
             $select = array(
                 '' => get_string('selecttype', 'local_encuestascdc'),
-                'teacher' => get_string('profesor', 'local_encuestascdc'),
                 'program-director' => get_string('program-director', 'local_encuestascdc'),
                 'client' =>  get_string('client', 'local_encuestascdc'));
+            if(count($teachers)>=1){
+                $select['teacher'] = get_string('profesor', 'local_encuestascdc');
+            }
+
             $formselect = $mform->addElement('select', 'type', get_string('questionnaire_type', 'local_encuestascdc'), $select);
             $mform->addHelpButton('type', 'questionnaire_type', 'local_encuestascdc');
             $mform->addRule('type', 'Debe seleccionar destinatario', 'required');
             $mform->hideIf('type', 'reporttype', 'eq', '');
-            
+
             $mform->addElement('hidden', 'id', $courseid);
             $mform->setType('id', PARAM_INT);
-            
+
             $mform->addElement('hidden', 'layout', 'document');
             $mform->setType('layout', PARAM_ALPHA);
 
@@ -187,17 +192,17 @@ class local_encuestascdc_questionnaire_form extends moodleform
             $mform->setType('profesor1', PARAM_RAW_TRIMMED);
             $mform->hideIf('profesor1', 'type', 'eq', 'client');
             $mform->setDefault('profesor1', isset($teachers[1]) ? $teachers[1] : '');
-            
+
             $formselect = $mform->addElement('text', 'profesor2', get_string('profesor', 'local_encuestascdc') . ' 2', $attributes);
             $mform->setType('profesor2', PARAM_RAW_TRIMMED);
             $mform->hideIf('profesor2', 'type', 'eq', 'client');
             $mform->setDefault('profesor2', isset($teachers[2]) ? $teachers[2] : '');
-            
+
             $formselect = $mform->addElement('text', 'profesor3', get_string('profesor', 'local_encuestascdc') . ' 3', $attributes);
             $mform->setType('profesor3', PARAM_RAW_TRIMMED);
             $mform->hideIf('profesor3', 'type', 'eq', 'client');
             $mform->setDefault('profesor3', isset($teachers[3]) ? $teachers[3] : '');
-            
+
             $formselect = $mform->addElement('text', 'coordinadora', get_string('coordinadora', 'local_encuestascdc'), $attributes);
             $mform->setType('coordinadora', PARAM_RAW_TRIMMED);
             $mform->addRule('coordinadora', 'Debe indicar el nombre de la coordinadora', 'required');
@@ -207,17 +212,17 @@ class local_encuestascdc_questionnaire_form extends moodleform
             $mform->setType('empresa', PARAM_RAW_TRIMMED);
             $mform->setDefault('empresa', $defaultcategory);
             $mform->addRule('empresa', 'Debe indicar el nombre de la empresa', 'required');
-            
+
             $formselect = $mform->addElement('text', 'asignatura', get_string('asignatura', 'local_encuestascdc'), $attributes);
             $mform->setType('asignatura', PARAM_RAW_TRIMMED);
             $mform->setDefault('asignatura', $course->fullname);
             $mform->addRule('asignatura', 'Debe indicar el nombre de la asignatura', 'required');
-            
+
             $formselect = $mform->addElement('text', 'programa', get_string('programa', 'local_encuestascdc'), $attributes);
             $mform->setType('programa', PARAM_RAW_TRIMMED);
             $mform->setDefault('programa', $coursecat->name);
             $mform->addRule('programa', 'Debe indicar el nombre del programa', 'required');
-            
+
             $this->add_action_buttons(false, 'Ver reporte');
         }
     }

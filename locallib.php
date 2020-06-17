@@ -229,6 +229,9 @@ function encuestascdc_obtiene_estadisticas(array $questionnaires, int $groupid =
         print_error('Tipo de pregunta Text Box no instalada');
     }
 
+    if(!$questiontypeessay = $DB->get_record('questionnaire_question_type', array('response_table'=>'response_text', 'type'=>'Essay Box'))) {
+        print_error('Tipo de pregunta Essay Box no instalada');
+    }
     $totalalumnos = 0;
     $pluginversion = intval(get_config('mod_questionnaire', 'version'));
     $rankfield = 'value'; // $pluginversion > 2018050109 ? '' : 'value';
@@ -297,6 +300,31 @@ FROM
     LEFT JOIN {questionnaire_response_text} rt ON (rt.response_id = r.id AND rt.question_id = q.id)
     $groupsql2
 GROUP BY qu.id,c.id,s.id, q.id
+UNION ALL
+SELECT qu.id,
+    c.id courseid,
+	c.fullname,
+	s.id surveyid,
+	s.title nombre,
+	q.name seccion,
+	q.content pregunta,
+    '' opcion,
+    '' length,
+    group_concat(rt.id order by r.userid separator '#') answers,
+    group_concat(r.userid order by r.userid separator '#') respondents,
+    q.position,
+    qt.type
+FROM
+	{questionnaire} qu
+	INNER JOIN {course} c ON (qu.course = c.id AND qu.id $insql)
+	INNER JOIN {course_modules} cm on (cm.course = qu.course AND cm.module = ? AND cm.instance = qu.id)
+	INNER JOIN {questionnaire_survey} s ON (s.id = qu.sid)
+	INNER JOIN {questionnaire_question} q ON (q.$surveyfield = s.id and q.type_id = ? and q.deleted = 'n')
+    INNER JOIN {questionnaire_question_type} qt ON (q.type_id = qt.typeid)
+    LEFT JOIN {questionnaire_response} r ON ($responseonclause)
+    LEFT JOIN {questionnaire_response_text} rt ON (rt.response_id = r.id AND rt.question_id = q.id)
+    $groupsql2
+GROUP BY qu.id,c.id,s.id, q.id
 ORDER BY position";
 
     $params = $inparams;
@@ -308,6 +336,16 @@ ORDER BY position";
     }
     $params[] = $module->id;
     $params[] = $questiontypetext->typeid;
+
+    if($groupid > 0) {
+        $params['groupid'] = $groupid;
+        $params['groupid2'] = $groupid;
+    }
+    for($i=0;$i<count($inparams);$i++) {
+        $params[] = $inparams[$i];
+    }
+    $params[] = $module->id;
+    $params[] = $questiontypeessay->typeid;
 
     if($groupid > 0) {
         $params['groupid'] = $groupid;
