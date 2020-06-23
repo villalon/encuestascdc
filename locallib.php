@@ -459,7 +459,13 @@ function encuestascdc_obtiene_estadisticas_por_curso($stats) {
         $context = context_course::instance($courseid);
         $enrolledusers = get_enrolled_users($context, 'mod/assignment:submit', $group);
         $totalrespondents = count($row['respondents']);
-        $totalstudents = count($enrolledusers);
+        $totalstudents = 0;
+        foreach($enrolledusers as $enrolleduser){
+            $hasstudentrole = user_has_role_assignment($enrolleduser->id,5,$context->id);
+            if($hasstudentrole) {
+                $totalstudents++;
+            }
+        }
         $ratio = $totalstudents > 0 ? round(($totalrespondents / $totalstudents) * 100, 1) : 0;
         $row['RATIO'] = $ratio;
         $row['ENROLLEDSTUDENTS'] = $totalstudents;
