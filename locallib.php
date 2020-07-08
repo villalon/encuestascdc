@@ -1169,3 +1169,60 @@ function encuestascdc_dibuja_portada($questionnaire, $group, $profesores, $profe
 
     echo $portada;
 }
+
+function encuestascdc_myprint_r($my_array,$titulo="TITULO",$firstIteration=false) {
+    //Funcion original: https://stackoverflow.com/questions/1386331/php-print-r-nice-table
+    if(is_object($my_array)){
+        $my_array = (array)$my_array;
+    }
+    if (is_array($my_array)) {
+        echo "<table border=1 cellspacing=0 cellpadding=3 width=100%>";
+        if (!$firstIteration)
+            echo '<tr><td colspan=2 style="background-color:#333333;"><strong><font color=white>'.$titulo.'</font></strong></td></tr>';
+        foreach ($my_array as $clase => $v) {
+            if(!is_numeric($clase)){
+                echo '<tr><td valign="top" style="width:40px;background-color:#F0F0F0;">';
+                echo '<strong>' . $clase . " </strong></td><td>";
+            }
+            encuestascdc_myprint_r($v,$clase,true);
+            if(!is_numeric($clase)){
+                echo "</td></tr>";
+            }
+        }
+        echo "</table>";
+        return;
+    }
+    //var_dump($my_array);
+    echo $my_array."<hr>";
+}
+
+/*function encuestascdc_myprint_r($my_array,$titulo="TITULO",$firstIteration=false) {
+    if (is_array((array)$my_array)) {
+        echo "<table border=1 cellspacing=0 cellpadding=3 width=100%>";
+        if(!$firstIteration) {
+            echo '<tr><td colspan=2 style="background-color:#333333;"><strong><font color=white>'.$titulo.' fi</font></strong></td></tr>';
+        } else {
+            if(!is_array($my_array))
+                echo '<tr><td  style="background-color:#F0F0F0;"><strong>'.$my_array.' si</strong></td></tr>';
+        }
+        echo '<tr>';
+        foreach ($my_array as $clase=>$valor) {
+            if(!is_numeric($clase)){
+                echo '<tr>';
+                echo '<td valign="top" style="width:40px;background-color:#F0F0F0;">';
+                echo "<strong>" . $clase . " cc</strong>";
+                echo "</td>";
+            }
+            echo "<td>";
+
+            encuestascdc_myprint_r($valor,$clase,true);
+            echo "</td>";
+            if(!is_numeric($clase))
+            echo "</tr>";
+        }
+        echo '</tr>';
+        echo "</table>";
+        return;
+    }
+    echo $my_array;
+}*/
