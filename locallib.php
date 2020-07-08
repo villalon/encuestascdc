@@ -738,6 +738,12 @@ function encuestascdc_dibuja_seccion($title, $subtitle, $profesores, $profesorin
                 echo 'ERROR GRAVE: No hay stats para sección ' . $originaltitle;
                 die();
             }
+            $averages=array();
+            foreach($questions as $q) {
+                $averages[] = $q['respuestas']->promedio;
+            }
+            $max = max($averages);
+            $min = min($averages);
             foreach($questions as $q) {
                 $htmlquestions .= '<li>' . substr($q['pregunta'], 3) . '</li>';
             }
@@ -750,8 +756,8 @@ function encuestascdc_dibuja_seccion($title, $subtitle, $profesores, $profesorin
                 </div>
                 <div class='estadisticas-seccion col-md-3 col-sm-4'>
                     <ul>
-                        <li>Máximo: $sectionstats->max</li>
-                        <li>Mínimo: $sectionstats->min</li>
+                        <li>Máximo: $max</li>
+                        <li>Mínimo: $min</li>
                         <li>Promedio: $sectionstats->promedio</li>
                     </ul>
                 </div>
