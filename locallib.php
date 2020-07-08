@@ -839,18 +839,18 @@ function encuestascdc_respuesta_stats($respuesta) {
     $max = 0;
     $min = 0;
     foreach($values as $idx => $val) {
-        if($idx > 0) {
-            $max = $val;
-            $min = $val;
+        if($val > 0) {
+            $max = $idx;
+            $min = $idx;
             break;
         }
     }
     foreach($values as $idx => $val) {
-        if($val > $max && $idx > 0) {
-            $max = $val;
+        if($idx > $max && $val > 0) {
+            $max = $idx;
         }
-        if($idx < $min && $idx > 0) {
-            $min = $val;
+        if($idx < $min && $val > 0) {
+            $min = $idx;
         }
     }
     $respondents = explode('#', $respuesta->respondents);
