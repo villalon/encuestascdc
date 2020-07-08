@@ -923,6 +923,9 @@ function uol_tabla_distribucion_respuestas($respuesta, $header = true) {
             $classinterno = 'cero';
             $fill = '#fff';
         }
+        if($percent>20){
+            $percent = 20;
+        }
         $tablahtml .= "<td width='$tdwidth'><svg width='40' height='40'><circle cx='20' cy='20' r='$percent' stroke='none' fill='$fill' />
 <text font-size='12'
       fill='black'
