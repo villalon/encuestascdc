@@ -144,8 +144,7 @@ $stats['bysection_average'] = $statsbysection_average;
 $stats['bysection_comments'] = $statsbysection_comments;
 $stats['bysection_questions'] = $statsbysection_questions;
 if($tiporeporte === 'course') {
-                var_dump("xxxxxxxxxxxx",$teachers,$profesor1,$profesor2,$profesor3);
-    var_dump("asdasjklda");
+                //var_dump("xxxxxxxxxxxx",$teachers,$profesor1,$profesor2,$profesor3);
     // Se obtienen los gráficos y las secciones de la encuesta
     $coursestats = $statsbycourse_average[0];
     if($destinatario === 'teacher') {
