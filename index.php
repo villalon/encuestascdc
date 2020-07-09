@@ -135,6 +135,7 @@ if($layout) {
 $stats = encuestascdc_obtiene_estadisticas($questionnaires);
 
 $teachers = encuestascdc_obtiene_profesores($stats, $profesor1, $profesor2, $profesor3);
+
 list($statsbycourse_average, $statsbycourse_comments) = encuestascdc_obtiene_estadisticas_por_curso($stats);
 list($statsbysection_average, $statsbysection_questions, $statsbysection_comments) = encuestascdc_obtiene_estadisticas_por_seccion($stats);
 $stats['bycourse_average'] = $statsbycourse_average;
@@ -143,6 +144,8 @@ $stats['bysection_average'] = $statsbysection_average;
 $stats['bysection_comments'] = $statsbysection_comments;
 $stats['bysection_questions'] = $statsbysection_questions;
 if($tiporeporte === 'course') {
+                var_dump("xxxxxxxxxxxx",$teachers,$profesor1,$profesor2,$profesor3);
+    var_dump("asdasjklda");
     // Se obtienen los gráficos y las secciones de la encuesta
     $coursestats = $statsbycourse_average[0];
     if($destinatario === 'teacher') {
@@ -160,8 +163,21 @@ if($tiporeporte === 'course') {
     }
 } elseif($tiporeporte === 'program') {
     echo("------------------------------");
-    var_dump($teachers);
-    encuestascdc_myprint_r($teachers,"Profesores");
+    //var_dump($teachers);
+    $teacher = [];
+    $teachernumber = 1;
+    if ($profesor1) {
+        $teacher["Profesor ".$teachernumber] = $profesor1;
+        $teachernumber +=1;
+    }
+    if ($profesor2) {
+        $teacher["Profesor ".$teachernumber] = $profesor2;
+        $teachernumber +=1;
+    }
+    if ($profesor3)
+        $teacher["Profesor ".$teachernumber] = $profesor3;
+
+    encuestascdc_myprint_r($teacher,"Profesores");
     echo("------------------------------");
     //var_dump($statsbycourse_average);
     encuestascdc_myprint_r($statsbycourse_average,"Promedio Curso");
