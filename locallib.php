@@ -406,7 +406,7 @@ ORDER BY position";
 
 function encuestascdc_obtiene_profesores($stats, $profesor1, $profesor2, $profesor3) {
     /**
-    * TODO No esta funcionando
+    * Solo muestra encuesta del profesor cuando existe.
     **/
     $teachers = array();
     foreach($stats as $courseid => $statcourse) {
@@ -1179,7 +1179,15 @@ function encuestascdc_dibuja_portada($questionnaire, $group, $profesores, $profe
 
     echo $portada;
 }
-
+/**
+*
+* Separacón de BETA de encuestascdc reporte Global
+*
+**/
+/**
+ * Nos permite imprimir en tablas todo lo que sea imprimible en print_r. Es basicamente un arreglo
+ * para visualizar de manera mas facil.
+ * */
 function encuestascdc_myprint_r($my_array,$titulo="TITULO",$firstIteration=false) {
     //Funcion original: https://stackoverflow.com/questions/1386331/php-print-r-nice-table
     if(is_object($my_array)){
@@ -1205,3 +1213,110 @@ function encuestascdc_myprint_r($my_array,$titulo="TITULO",$firstIteration=false
     echo $my_array."<hr>";
 }
 
+function encuestascdc_dibujar_reporte_global($stats, $profesores, $profesorindex, $coordinadora, $reporttype, $destinatario) {
+    // Este for each nos imprime todos los Promedios
+    $html = '';
+    $html .= "<div class='seccioncompleta break-before seccion'>";
+    $html .= encuestascdc_tabla_respuestas_reporte_global();
+    $html .= "</div><div class='seccioncompleta break-before seccion'>";
+    $htmlcomments = '';
+    foreach($stats['bysection_questions'] as $section => $questions) {
+        if(!$sectionstats = $stats['bysection_average'][$section]) {
+            continue;
+        }
+        $sectioncomments = false;
+        if(isset($stats['bysection_comments'][$section])) {
+            $sectioncomqments = $stats['bysection_comments'][$section];
+        }
+        //Esto imprime comentarios en caso de que existan (Profesores)
+        if($sectioncomments) {
+            $htmlcomments .= encuestascdc_dibuja_comentarios($sectioncomments, $profesores, $profesorindex, $coordinadora);
+        }
+
+        $sectionstats->promedio = round($sectionstats->promedio, 1);
+        $html .= encuestascdc_dibuja_seccion_reporte_global($section, $profesores, $profesorindex, $coordinadora, $questions, $stats, null, $reporttype, $destinatario);
+    }
+    $html.= " </div>";
+
+    $html .= "<div class='seccioncompleta break-before seccion'>";
+    // Este for each nos imprime todos losComentarios
+    foreach($stats['bysection_comments'] as $section => $comments) {
+        if(isset($stats['bysection_average'][$section])) {
+            continue;
+        }
+        $htmlcomments .= encuestascdc_dibuja_comentarios($comments, $profesores, $profesorindex, $coordinadora);
+        $html .= encuestascdc_dibuja_seccion_reporte_global($section, $profesores, $profesorindex, $coordinadora, null, null, $htmlcomments, $reporttype, $destinatario);
+    }
+    echo $html;
+    $html.= " </div>";
+    echo '<div class="endreport"></div>';
+}
+
+function encuestascdc_dibuja_seccion_reporte_global($title, $profesores, $profesorindex, $coordinadora, $questions, $stats, $htmlcomments, $reporttype, $destinatario) {
+    $htmlteacher = '';
+    $originaltitle = $title;
+
+
+    $htmlquestions = '';
+
+    if($questions && $stats) {
+        $i=0;
+        $min = $max = $promedio =[];
+        foreach($questions as $q) {
+            $index = 0;
+            if(strpos($q['pregunta'], 'Profesor/Facilitador') > 0) {
+                $index = intval(substr($q['pregunta'], -1));
+                if($profesorindex > 0 && $profesorindex !== $index) {
+                    continue;
+                }
+            }
+            /**
+             * TODO  Debemos aislar el promedio. Actualmente esta calculando el promedio por pregunta, no por clase.
+             * */
+            $stats = $q['respuestas'];
+            $min[] = $stats->min;
+            $max[] = $stats->max;
+            $promedio[] = $stats->promedio;
+           //$htmlquestions .= '<tr><td class="datos">' . $tabla . '</td></tr>';
+            $i++;
+        }
+
+        $tabla .= encuestascdc_tabla_respuestas_reporte_global(false, $min ,$max ,$promedio ,$title);
+        $htmlquestions .= '<tr><td class="datos">' . $tabla . '</td></tr>';
+    }
+    $htmlquestions = "
+    <div class='row row-questions'>
+        <div class='preguntas col-md-12 col-sm-12'>
+            <table class='tabladistribucion'>
+                $htmlquestions
+            </table>
+        </div>
+    </div>";
+    $html.="
+        $htmlteacher
+        $htmlquestions
+        $htmlcomments";
+    return $html;
+}
+function encuestascdc_array_average($array) {
+    $average = array_sum($array) / count($array);
+    return $average;
+}
+function encuestascdc_tabla_respuestas_reporte_global($header = true, $min = 0,$max = 0,$promedio = 0,$titulo = "TITULO" ) {
+    $min  = encuestascdc_array_average($min);
+    $max  = encuestascdc_array_average($max);
+    $promedio  = encuestascdc_array_average($promedio);
+    $tablahtml .= '<table class="datos"><tr>';
+    if($header) {
+        $tablahtml .= "<tr><td width='50%'><b>ASPECTOS EVALUADOS</b</td>
+                           <td width='25%'><b>POR PREGUNTA</b></td>
+                           <td width='25%'><b>PROMEDIO</b></td>
+                       </tr>";
+        $tablahtml .= "</table>";
+    } else {
+    $tablahtml .= '<td style="width:50%"> '.$titulo.' </td>';
+    $tablahtml .= '<td style="width:25%"> Min :'.$min.'<br>Max :'.$max.'</td>';
+    $tablahtml .= '<td style="width:25%" class="promedio">'.$promedio.'</td></tr></table>';
+    }
+    return $tablahtml;
+}

@@ -144,7 +144,6 @@ $stats['bysection_average'] = $statsbysection_average;
 $stats['bysection_comments'] = $statsbysection_comments;
 $stats['bysection_questions'] = $statsbysection_questions;
 if($tiporeporte === 'course') {
-                //var_dump("xxxxxxxxxxxx",$teachers,$profesor1,$profesor2,$profesor3);
     // Se obtienen los gráficos y las secciones de la encuesta
     $coursestats = $statsbycourse_average[0];
     if($destinatario === 'teacher') {
@@ -161,24 +160,48 @@ if($tiporeporte === 'course') {
         encuestascdc_dibujar_reporte($stats, $teachers, 0, $coordinadora, $tiporeporte, $destinatario);
     }
 } elseif($tiporeporte === 'program') {
-    echo("------------------------------");
+    //echo("------------------------------");
     //var_dump($teachers);
-    $teacher = [];
-    $teachernumber = 1;
-    if ($profesor1) {
-        $teacher["Profesor ".$teachernumber] = $profesor1;
-        $teachernumber +=1;
-    }
-    if ($profesor2) {
-        $teacher["Profesor ".$teachernumber] = $profesor2;
-        $teachernumber +=1;
-    }
-    if ($profesor3)
-        $teacher["Profesor ".$teachernumber] = $profesor3;
+    /*
+    if(!$teachers) {
+        $teacher = [];
+        $teachernumber = 1;
+        if ($profesor1) {
+            $teachers["Profesor ".$teachernumber] = $profesor1;
+            $teachernumber +=1;
+        }
+        if ($profesor2) {
+            $teachers["Profesor ".$teachernumber] = $profesor2;
+            $teachernumber +=1;
+        }
+        if ($profesor3)
+            $teachers["Profesor ".$teachernumber] = $profesor3;
+    }*/
 
-    encuestascdc_myprint_r($teacher,"Profesores");
-    echo("------------------------------");
-    //var_dump($statsbycourse_average);
+    //encuestascdc_myprint_r($teachers,"Profesores");
+    //var_dump($stats, $teachers, 0, $coordinadora, $tiporeporte, $destinatario);
+    echo "
+    <div class='seccioncompleta break-before seccion'>
+        <div class = 'row'>
+            <div class = 'h4 col-md-6'>RESULTADOS GLOBALES</div>
+            <div class = 'h4 col-md-6 '>
+                <center>NIVEL DE CONFORMIDAD CON AFIRMACIONES<center>
+            </div>
+        </div>
+        <div class = 'row'>
+        <div class = 'h4 col-md-6'>
+        </div>
+        <div style='text-align:center' class = 'col-md-6  tituloescala'>
+            <small>
+                Nivel de conformidad:
+                1: Bajo - 2: Medio bajo - 3: Medio alto - 4: Alto
+            </small>
+        </div></div></div>
+          ";
+
+
+    encuestascdc_dibujar_reporte_global($stats, $teachers, 0, $coordinadora, $tiporeporte, $destinatario);
+   /* echo("------------------------------");
     encuestascdc_myprint_r($statsbycourse_average,"Promedio Curso");
         echo("------------------------------");
     encuestascdc_myprint_r($statsbycourse_comments,"Comentarios Curso");
@@ -187,7 +210,7 @@ if($tiporeporte === 'course') {
         echo("------------------------------");
     encuestascdc_myprint_r($statsbysection_questions,"Preguntas Sección");
         echo("------------------------------");
-    encuestascdc_myprint_r($statsbysection_comments,"Comentarios Sección");/*
+    encuestascdc_myprint_r($statsbysection_comments,"Comentarios Sección");
     encuestascdc_myprint_r($stats);
     echo("------------------------------");
     echo '<div style=" resize: both; "><pre>' . print_r($teachers, true) . '</pre></div>';
