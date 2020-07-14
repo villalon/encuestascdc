@@ -1253,12 +1253,8 @@ function encuestascdc_dibujar_reporte_global($stats, $profesores, $profesorindex
 }
 
 function encuestascdc_dibuja_seccion_reporte_global($title, $profesores, $profesorindex, $coordinadora, $questions, $stats, $htmlcomments, $reporttype, $destinatario) {
-    $htmlteacher = '';
+    $htmlteacher = $htmlquestions = $html= '';
     $originaltitle = $title;
-
-
-    $htmlquestions = '';
-
     if($questions && $stats) {
         $i=0;
         $min = $max = $promedio =[];
@@ -1270,9 +1266,6 @@ function encuestascdc_dibuja_seccion_reporte_global($title, $profesores, $profes
                     continue;
                 }
             }
-            /**
-             * TODO  Debemos aislar el promedio. Actualmente esta calculando el promedio por pregunta, no por clase.
-             * */
             $stats = $q['respuestas'];
             $min[] = $stats->min;
             $max[] = $stats->max;
@@ -1281,7 +1274,7 @@ function encuestascdc_dibuja_seccion_reporte_global($title, $profesores, $profes
             $i++;
         }
 
-        $tabla .= encuestascdc_tabla_respuestas_reporte_global(false, $min ,$max ,$promedio ,$title);
+        $tabla = encuestascdc_tabla_respuestas_reporte_global(false, $min ,$max ,$promedio ,$title);
         $htmlquestions .= '<tr><td class="datos">' . $tabla . '</td></tr>';
     }
     $htmlquestions = "
@@ -1294,8 +1287,9 @@ function encuestascdc_dibuja_seccion_reporte_global($title, $profesores, $profes
     </div>";
     $html.="
         $htmlteacher
-        $htmlquestions
-        $htmlcomments";
+        $htmlquestions";
+    if(isset($htmlcomments))
+        $html.= "$htmlcomments";
     return $html;
 }
 function encuestascdc_array_average($array) {
