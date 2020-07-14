@@ -1302,7 +1302,6 @@ function encuestascdc_array_average($array) {
     if (is_array($array))
         $average = array_sum($array) / count($array);
     else
-        $array = $average;
     return round($average,1);
 }
 function encuestascdc_tabla_respuestas_reporte_global($header = true, $min = 0,$max = 0,$promedio = 0,$titulo = "TITULO" ) {
