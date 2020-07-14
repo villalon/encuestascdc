@@ -1309,7 +1309,8 @@ function encuestascdc_tabla_respuestas_reporte_global($header = true, $min = 0,$
     $min  = encuestascdc_array_average($min);
     $max  = encuestascdc_array_average($max);
     $promedio  = encuestascdc_array_average($promedio);
-    $tablahtml .= '<table class="datos"><tr>';
+
+    $tablahtml = '<table class="datos"><tr>';
     if($header) {
         $tablahtml .= "<tr><td width='50%'><b>ASPECTOS EVALUADOS</b</td>
                            <td width='25%'><b>POR PREGUNTA</b></td>
