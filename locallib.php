@@ -1216,9 +1216,9 @@ function encuestascdc_myprint_r($my_array,$titulo="TITULO",$firstIteration=false
 function encuestascdc_dibujar_reporte_global($stats, $profesores, $profesorindex, $coordinadora, $reporttype, $destinatario) {
     // Este for each nos imprime todos los Promedios
     $html = '';
-    $html .= "<div class='seccioncompleta break-before seccion'>";
+    $html .= "<div class='seccion'>";
     $html .= encuestascdc_tabla_respuestas_reporte_global();
-    $html .= "</div><div class='seccioncompleta break-before seccion'>";
+    $html .= "</div><div class='seccion'>";
     $htmlcomments = '';
     foreach($stats['bysection_questions'] as $section => $questions) {
         if(!$sectionstats = $stats['bysection_average'][$section]) {
@@ -1238,7 +1238,7 @@ function encuestascdc_dibujar_reporte_global($stats, $profesores, $profesorindex
     }
     $html.= " </div>";
 
-    $html .= "<div class='seccioncompleta break-before seccion'>";
+    $html .= "<div class='seccion'>";
     // Este for each nos imprime todos losComentarios
     foreach($stats['bysection_comments'] as $section => $comments) {
         if(isset($stats['bysection_average'][$section])) {
@@ -1317,4 +1317,82 @@ function encuestascdc_tabla_respuestas_reporte_global($header = true, $min = 0,$
     $tablahtml .= '<td style="width:25%" class="promedio">'.$promedio.'</td></tr></table>';
     }
     return $tablahtml;
+}
+
+
+function encuestascdc_dibujar_grafico_columnas($datos) {
+    //formato de datos, arreglo de [[String, Int]]
+    //Origen: https://www.amcharts.com/demos/simple-column-chart/
+    $html = '';
+    $html = '
+        <style>
+        #chartdiv {
+          width: 100%;
+          height: 500px;
+        }
+        </style>
+        <!-- Resources -->
+        <script src="https://www.amcharts.com/lib/4/core.js"></script>
+        <script src="https://www.amcharts.com/lib/4/charts.js"></script>
+        <script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
+        <script>';
+        $html .= '
+        am4core.ready(function() {
+            // Themes begin
+            am4core.useTheme(am4themes_animated);
+            // Themes end
+
+        var chart = am4core.create("chartdiv", am4charts.XYChart);
+        ';
+        //Insertamos los datos que iran dentro de los graficos, formato $array = [[titulo, promedio]]
+        $html .= '
+            // Create chart instance
+
+            // Add data
+            chart.data = [';
+        foreach ($datos as $dato){
+            $html .='
+            {
+              "categoria": "'.$dato[0].'",
+              "promedio": "'.$dato[1].'"
+            }, ';
+
+        }
+         $html .='
+            ];'; //Fin datos ingresados
+
+
+        $html .='
+            // Create axes
+
+            var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
+            categoryAxis.dataFields.category = "categoria";
+            categoryAxis.renderer.grid.template.location = 0;
+            categoryAxis.renderer.minGridDistance = 30;
+
+            categoryAxis.renderer.labels.template.adapter.add("dy", function(dy, target) {
+              if (target.dataItem && target.dataItem.index & 2 == 2) {
+                return dy + 25;
+              }
+              return dy;
+            });
+
+            var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+
+            // Create series
+            var series = chart.series.push(new am4charts.ColumnSeries());
+            series.dataFields.valueY = "promedio";
+            series.dataFields.categoryX = "categoria";
+            series.name = "promedio";
+            series.columns.template.tooltipText = "{categoryX}: [bold]{valueY}[/]";
+            series.columns.template.fillOpacity = .8;
+
+            var columnTemplate = series.columns.template;
+            columnTemplate.strokeWidth = 2;
+            columnTemplate.strokeOpacity = 1;
+
+        }); // end am4core.ready()
+        </script>
+        <div id="chartdiv"></div>';
+        echo $html;
 }

@@ -181,7 +181,7 @@ if($tiporeporte === 'course') {
     //encuestascdc_myprint_r($teachers,"Profesores");
     //var_dump($stats, $teachers, 0, $coordinadora, $tiporeporte, $destinatario);
     echo "
-    <div class='seccioncompleta break-before seccion'>
+    <div class='seccion'>
         <div class = 'row'>
             <div class = 'h4 col-md-6'>RESULTADOS GLOBALES</div>
             <div class = 'h4 col-md-6 '>
@@ -201,6 +201,10 @@ if($tiporeporte === 'course') {
 
 
     encuestascdc_dibujar_reporte_global($stats, $teachers, 0, $coordinadora, $tiporeporte, $destinatario);
+    $test = [['Titulo',5],['titulo2',6]];
+    encuestascdc_dibujar_grafico_columnas($test);
+//Origen: https://www.amcharts.com/demos/simple-column-chart/
+
    /* echo("------------------------------");
     encuestascdc_myprint_r($statsbycourse_average,"Promedio Curso");
         echo("------------------------------");
