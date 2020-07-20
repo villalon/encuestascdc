@@ -160,26 +160,7 @@ if($tiporeporte === 'course') {
         encuestascdc_dibujar_reporte($stats, $teachers, 0, $coordinadora, $tiporeporte, $destinatario);
     }
 } elseif($tiporeporte === 'program') {
-    //echo("------------------------------");
-    //var_dump($teachers);
-    /*
-    if(!$teachers) {
-        $teacher = [];
-        $teachernumber = 1;
-        if ($profesor1) {
-            $teachers["Profesor ".$teachernumber] = $profesor1;
-            $teachernumber +=1;
-        }
-        if ($profesor2) {
-            $teachers["Profesor ".$teachernumber] = $profesor2;
-            $teachernumber +=1;
-        }
-        if ($profesor3)
-            $teachers["Profesor ".$teachernumber] = $profesor3;
-    }*/
 
-    //encuestascdc_myprint_r($teachers,"Profesores");
-    //var_dump($stats, $teachers, 0, $coordinadora, $tiporeporte, $destinatario);
     echo "
     <div class='seccion'>
         <div class = 'row'>
@@ -200,9 +181,9 @@ if($tiporeporte === 'course') {
           ";
 
 
-    encuestascdc_dibujar_reporte_global($stats, $teachers, 0, $coordinadora, $tiporeporte, $destinatario);
-    $test = [['Titulo',5],['titulo2',6]];
-    encuestascdc_dibujar_grafico_columnas($test);
+    $resumen = encuestascdc_dibujar_reporte_global($stats, $teachers, 0, $coordinadora, $tiporeporte, $destinatario);
+    //$test = [['Titulo',5],['titulo2',6]];
+    encuestascdc_dibujar_grafico_columnas($resumen);
 //Origen: https://www.amcharts.com/demos/simple-column-chart/
 
    /* echo("------------------------------");
