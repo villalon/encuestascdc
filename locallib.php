@@ -1259,7 +1259,7 @@ function encuestascdc_dibujar_reporte_global($stats, $profesores, $profesorindex
 }
 
 function encuestascdc_dibuja_seccion_reporte_global($title, $profesores, $profesorindex, $coordinadora, $questions, $stats, $htmlcomments, $reporttype, $destinatario) {
-    $htmlteacher = $htmlquestions = $html= '';
+    $htmlteacher = $htmlquestions = $html = $promediofinal = '';
     $originaltitle = $title;
     if($questions && $stats) {
         $i=0;
@@ -1359,6 +1359,7 @@ function encuestascdc_dibujar_grafico_columnas($datos) {
             chart.data = [';
         foreach ($datos as $dato){
             if(!($dato[1] > 4)){
+                //La tabla deberia ir de 1 a 4, cualquier evaluacion por sobre 4 no deberia ser considerada.
                 $html .='
                 {
                   "categoria": "'.$dato[0].'",
