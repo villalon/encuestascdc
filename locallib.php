@@ -1280,7 +1280,7 @@ function encuestascdc_dibuja_seccion_reporte_global($title, $profesores, $profes
             $i++;
         }
 
-        list($tabla, $promedio) = encuestascdc_tabla_respuestas_reporte_global(false, $min ,$max ,$promedio ,$title);
+        list($tabla, $promediofinal) = encuestascdc_tabla_respuestas_reporte_global(false, $min ,$max ,$promedio ,$title);
         $htmlquestions .= '<tr><td class="datos">' . $tabla . '</td></tr>';
     }
     $htmlquestions = "
@@ -1296,7 +1296,7 @@ function encuestascdc_dibuja_seccion_reporte_global($title, $profesores, $profes
         $htmlquestions";
     if(isset($htmlcomments))
         $html.= "$htmlcomments";
-    return array($html, $title, $promedio);
+    return array($html, $title, $promediofinal);
 }
 function encuestascdc_array_average($array) {
     if (is_array($array))
@@ -1358,11 +1358,13 @@ function encuestascdc_dibujar_grafico_columnas($datos) {
             // Add data
             chart.data = [';
         foreach ($datos as $dato){
-            $html .='
-            {
-              "categoria": "'.$dato[0].'",
-              "promedio": "'.$dato[1].'"
-            }, ';
+            if(!($dato[1] > 4)){
+                $html .='
+                {
+                  "categoria": "'.$dato[0].'",
+                  "promedio": "'.$dato[1].'"
+                }, ';
+            }
 
         }
          $html .='

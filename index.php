@@ -164,27 +164,46 @@ if($tiporeporte === 'course') {
     echo "
     <div class='seccion'>
         <div class = 'row'>
-            <div class = 'h4 col-md-6'>RESULTADOS GLOBALES</div>
+            <div class = 'h4 col-md-6'>RESULTADOS GLOBALES
+            </div>
             <div class = 'h4 col-md-6 '>
-                <center>NIVEL DE CONFORMIDAD CON AFIRMACIONES<center>
+                <center>NIVEL DE CONFORMIDAD CON AFIRMACIONES</center>
             </div>
         </div>
         <div class = 'row'>
-        <div class = 'h4 col-md-6'>
+            <div class = 'h4 col-md-6'>
+            </div>
+            <div style='text-align:center' class = 'col-md-6  tituloescala'>
+                <small>
+                    Nivel de conformidad:
+                    1: Bajo - 2: Medio bajo - 3: Medio alto - 4: Alto
+                </small>
+            </div>
         </div>
-        <div style='text-align:center' class = 'col-md-6  tituloescala'>
-            <small>
-                Nivel de conformidad:
-                1: Bajo - 2: Medio bajo - 3: Medio alto - 4: Alto
-            </small>
-        </div></div></div>
-          ";
+    </div>
+          <div class='seccion'>";
 
 
     $resumen = encuestascdc_dibujar_reporte_global($stats, $teachers, 0, $coordinadora, $tiporeporte, $destinatario);
-    //$test = [['Titulo',5],['titulo2',6]];
+
+    echo "</div><br>
+        <div class = 'row'>
+            <div class = 'h4 col-md-6'>RESULTADOS ENCUESTAS DE SATISFACCIÓN
+            </div>
+        </div>
+        <div class = 'row'>
+            <div class = 'col-md-6  tituloescala'>
+                <small>
+                    Nivel de conformidad:
+                    1: Bajo - 2: Medio bajo - 3: Medio alto - 4: Alto
+                </small>
+            </div>
+        </div>
+          ";
     encuestascdc_dibujar_grafico_columnas($resumen);
-//Origen: https://www.amcharts.com/demos/simple-column-chart/
+
+
+
 
    /* echo("------------------------------");
     encuestascdc_myprint_r($statsbycourse_average,"Promedio Curso");
