@@ -185,7 +185,7 @@ if($tiporeporte === 'course') {
 
 
     $resumen = encuestascdc_dibujar_reporte_global($stats, $teachers, 0, $coordinadora, $tiporeporte, $destinatario);
-
+    //var_dump($stats);
     echo "</div><br>
         <div class = 'row'>
             <div class = 'h4 col-md-6'>RESULTADOS ENCUESTAS DE SATISFACCIÓN
@@ -200,7 +200,10 @@ if($tiporeporte === 'course') {
             </div>
         </div>
           ";
+    echo '<br><br><div class="seccion">';
     encuestascdc_dibujar_grafico_columnas($resumen);
+    echo '</div><br><br>';
+    encuestascdc_dibujar_reporte_global_resumen_individual($statsbycourse_average);
 
 
 
