@@ -1307,7 +1307,7 @@ function encuestascdc_dibuja_seccion_reporte_global($title, $profesores, $profes
 }
 
 function encuestascdc_array_average($array) {
-    if (is_array($array))
+    if (is_array($array) && count($array)>0)
         $average = array_sum($array) / count($array);
     else
         $average = $array;
@@ -1428,37 +1428,47 @@ function encuestascdc_dibujar_reporte_global_resumen_individual($statsbycourse_a
                 <td width="15%"><b>PROFESOR</b></td>
             </tr>
         </table>
-    </div>
+    </div><br>
     <div class="seccion">
         <table class="datos">
     ';
     $prom_autoevaluacion = $prom_cursoTaller = $prom_profesor = [];
+
     foreach($statsbycourse_average as $section => $data) {
-        //var_dump($data);
         if ($titulo = $data['CURSO']) {
 
             $tablahtml .= '<tr><td style="width:55%"> '.$titulo.' </td>';
+
             if(!($autoevaluacion = $data['AUTOEVALUACIÓN'])) {
                 $autoevaluacion = "n/a";
+                $prom_autoevaluacion[] = 0;
             } else {
+                $autoevaluacion = round($autoevaluacion,1);
                 $prom_autoevaluacion[] = $autoevaluacion;
             }
             $tablahtml .= '<td style="width:15%">'.$autoevaluacion.'</td>';
+
             if(!($cursoTaller = $data['EVALUACIÓN ACADÉMICA'])) {
                 $cursoTaller = "n/a";
+                $prom_cursoTaller[] = 0;
             } else {
+                $cursoTaller = round($cursoTaller,1);
                 $prom_cursoTaller[] = $cursoTaller;
             }
             $tablahtml .= '<td style="width:15%">'.$cursoTaller.'</td>';
+
             if(!($profesor = $data['EVALUACIÓN DEL PROFESOR'])) {
                 $profesor = "n/a";
+                $prom_profesor[] = 0;
             } else {
+                $profesor = round($profesor,1);
                 $prom_profesor[] = $profesor;
             }
-                $profesor = "n/a";
             $tablahtml .= '<td style="width:15%">'.$profesor.'</td></tr>';
         }
     }
+
+
     $prom_profesor          = encuestascdc_array_average($prom_profesor);
     $prom_cursoTaller       = encuestascdc_array_average($prom_cursoTaller);
     $prom_autoevaluacion    = encuestascdc_array_average($prom_autoevaluacion);
