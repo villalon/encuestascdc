@@ -1221,7 +1221,7 @@ function encuestascdc_dibujar_reporte_global($stats, $profesores, $profesorindex
     $html .= encuestascdc_tabla_respuestas_reporte_global();
     $html .= "
         </div>
-        <div class='seccion'>";
+        <div style = 'page-break-after: always' class='seccion'>";
     $htmlcomments = '';
     $resumen = [];
     foreach($stats['bysection_questions'] as $section => $questions) {

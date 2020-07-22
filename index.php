@@ -181,7 +181,7 @@ if($tiporeporte === 'course') {
             </div>
         </div>
     </div>
-          <div class='seccion'>";
+          <div style = 'page-break-after: always' class='seccion'>";
 
 
     $resumen = encuestascdc_dibujar_reporte_global($stats, $teachers, 0, $coordinadora, $tiporeporte, $destinatario);
@@ -200,9 +200,29 @@ if($tiporeporte === 'course') {
             </div>
         </div>
           ";
-    echo '<br><br><div class="seccion">';
+    echo '<br><br><div style = "page-break-after: always" class="seccion">';
     encuestascdc_dibujar_grafico_columnas($resumen);
     echo '</div><br><br>';
+    echo "
+    <div class='seccion'>
+        <div class = 'row'>
+            <div class = 'h4 col-md-6'>RESULTADOS ENCUESTAS DE SATISFACCIÓN
+            </div>
+            <div class = 'h4 col-md-6 '>
+                <center>NIVEL DE CONFORMIDAD CON AFIRMACIONES</center>
+            </div>
+        </div>
+        <div class = 'row'>
+            <div class = 'h4 col-md-6'>
+            </div>
+            <div style='text-align:center' class = 'col-md-6  tituloescala'>
+                <small>
+                    Nivel de conformidad:
+                    1: Bajo - 2: Medio bajo - 3: Medio alto - 4: Alto
+                </small>
+            </div>
+        </div>
+    </div>";
     encuestascdc_dibujar_reporte_global_resumen_individual($statsbycourse_average);
 
 
