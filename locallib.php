@@ -683,7 +683,8 @@ function encuestascdc_dibuja_comentarios($sectioncomments, $profesores, $profeso
         $respuestas=array();
         foreach($commentsarr as $comment) {
             $respuesta = $DB->get_record('questionnaire_response_text',array('id' => $comment));
-            $respuestas[] = $respuesta->response;
+            if(isset($respuesta->response))
+                $respuestas[] = $respuesta->response;
         }
 
         $answers = "- " . implode(" (sic) \n- ", $respuestas) . " (SIC)";
@@ -1439,28 +1440,31 @@ function encuestascdc_dibujar_reporte_global_resumen_individual($statsbycourse_a
 
             $tablahtml .= '<tr><td style="width:55%"> '.$titulo.' </td>';
 
-            if(!($autoevaluacion = $data['AUTOEVALUACIÓN'])) {
+            if(!isset($data['AUTOEVALUACIÓN'])) {
                 $autoevaluacion = "n/a";
                 $prom_autoevaluacion[] = 0;
             } else {
+                $autoevaluacion = $data['AUTOEVALUACIÓN'];
                 $autoevaluacion = round($autoevaluacion,1);
                 $prom_autoevaluacion[] = $autoevaluacion;
             }
             $tablahtml .= '<td style="width:15%">'.$autoevaluacion.'</td>';
 
-            if(!($cursoTaller = $data['EVALUACIÓN ACADÉMICA'])) {
+            if(!isset($data['EVALUACIÓN ACADÉMICA'])) {
                 $cursoTaller = "n/a";
                 $prom_cursoTaller[] = 0;
             } else {
+                $cursoTaller = $data['EVALUACIÓN ACADÉMICA'];
                 $cursoTaller = round($cursoTaller,1);
                 $prom_cursoTaller[] = $cursoTaller;
             }
             $tablahtml .= '<td style="width:15%">'.$cursoTaller.'</td>';
 
-            if(!($profesor = $data['EVALUACIÓN DEL PROFESOR'])) {
+            if(!isset($data['EVALUACIÓN DEL PROFESOR'])) {
                 $profesor = "n/a";
                 $prom_profesor[] = 0;
             } else {
+                $profesor = $data['EVALUACIÓN DEL PROFESOR'];
                 $profesor = round($profesor,1);
                 $prom_profesor[] = $profesor;
             }
