@@ -163,23 +163,25 @@ if($tiporeporte === 'course') {
 
     echo "
     <div class='seccion'>
-        <div class = 'row'>
-            <div class = 'h4 col-md-6'>RESULTADOS GLOBALES
-            </div>
-            <div class = 'h4 col-md-6 '>
-                <center>NIVEL DE CONFORMIDAD CON AFIRMACIONES</center>
-            </div>
-        </div>
-        <div class = 'row'>
-            <div class = 'h4 col-md-6'>
-            </div>
-            <div style='text-align:center' class = 'col-md-6  tituloescala'>
-                <small>
-                    Nivel de conformidad:
-                    1: Bajo - 2: Medio bajo - 3: Medio alto - 4: Alto
-                </small>
-            </div>
-        </div>
+
+        <table>
+            <th width='50%'>
+                <div class = 'h5 col-md-6'>
+                    RESULTADOS GLOBALES
+                </div><br>
+            </th><th width='50%'>
+                <center>
+                    <div class = 'h5 col-md-6 '>
+                        NIVEL DE CONFORMIDAD CON AFIRMACIONES
+                    </div>
+                    <small>
+                        Nivel de conformidad:
+                        1: Bajo - 2: Medio bajo - 3: Medio alto - 4: Alto
+                    </small>
+                </center>
+            </th>
+        </table>
+
     </div>
           <div style = 'page-break-after: always' class='seccion'>";
 
@@ -188,7 +190,7 @@ if($tiporeporte === 'course') {
     //var_dump($stats);
     echo "</div><br>
         <div class = 'row'>
-            <div class = 'h4 col-md-6'>RESULTADOS ENCUESTAS DE SATISFACCIÓN
+            <div class = 'h5 col-md-6'>RESULTADOS ENCUESTAS DE SATISFACCIÓN
             </div>
         </div>
         <div class = 'row'>
@@ -205,23 +207,23 @@ if($tiporeporte === 'course') {
     echo '</div><br><br>';
     echo "
     <div class='seccion'>
-        <div class = 'row'>
-            <div class = 'h4 col-md-6'>RESULTADOS ENCUESTAS DE SATISFACCIÓN
-            </div>
-            <div class = 'h4 col-md-6 '>
-                <center>NIVEL DE CONFORMIDAD CON AFIRMACIONES</center>
-            </div>
-        </div>
-        <div class = 'row'>
-            <div class = 'h4 col-md-6'>
-            </div>
-            <div style='text-align:center' class = 'col-md-6  tituloescala'>
-                <small>
-                    Nivel de conformidad:
-                    1: Bajo - 2: Medio bajo - 3: Medio alto - 4: Alto
-                </small>
-            </div>
-        </div>
+        <table>
+            <th width='50%'>
+                <div class = 'h5 col-md-6'>
+                    RESULTADOS ENCUESTAS DE SATISFACCIÓN
+                </div><br>
+            </th><th width='50%'>
+                <center>
+                    <div class = 'h5 col-md-6 '>
+                        NIVEL DE CONFORMIDAD CON AFIRMACIONES
+                    </div>
+                    <small>
+                        Nivel de conformidad:
+                        1: Bajo - 2: Medio bajo - 3: Medio alto - 4: Alto
+                    </small>
+                </center>
+            </th>
+        </table>
     </div>";
     encuestascdc_dibujar_reporte_global_resumen_individual($statsbycourse_average);
 
