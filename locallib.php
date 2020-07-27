@@ -1438,7 +1438,7 @@ function encuestascdc_aasort (&$array, $key) {
 
         $sorter[$ii]=$va[$key];
     }
-    asort($sorter);
+    asort($sorter,1);
     //var_dump($sorter);
     foreach ($sorter as $ii => $va) {
         $ret[$ii]=$array[$ii];
