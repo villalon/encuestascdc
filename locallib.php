@@ -670,7 +670,6 @@ function encuestascdc_dibujar_reporte($stats, $profesores, $profesorindex, $coor
 }
 function encuestascdc_dibuja_comentarios($sectioncomments, $profesores, $profesorindex, $coordinadora) {
     global $DB;
-    var_dump ($sectioncomments);
     $htmlcomments = '';
     foreach($sectioncomments as $question => $commentsarr) {
         $pregunta = $question;
@@ -1259,7 +1258,7 @@ function encuestascdc_dibujar_reporte_global($stats, $profesores, $profesorindex
     $html.= "
         </div>";
     // Este for each nos imprime todos los Comentarios
-    print_r($stats);
+    //print_r($stats);
     print_r($stats['bysection_comments']);
     foreach($stats['bysection_comments'] as $section => $comments) {
         if(isset($stats['bysection_average'][$section])) {
