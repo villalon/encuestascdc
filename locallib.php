@@ -632,6 +632,8 @@ function uol_tabla_respuesta_text($respuesta, $profesor1, $profesor2, $coordinad
 </div>";
 }
 function encuestascdc_dibujar_reporte($stats, $profesores, $profesorindex, $coordinadora, $reporttype, $destinatario) {
+    mtrace("wah");
+    encuestascdc_myprint_r($stats);
     foreach($stats['bysection_questions'] as $section => $questions) {
         if(!$sectionstats = $stats['bysection_average'][$section]) {
             continue;
@@ -1225,6 +1227,7 @@ function encuestascdc_dibujar_reporte_global($stats, $profesores, $profesorindex
         </div>
         <div style = 'page-break-after: always' class='seccion'>";
     $resumen = [];
+    var_dump($stats['bysection_comments']);
     foreach($stats['bysection_questions'] as $section => $questions) {
         if(!$sectionstats = $stats['bysection_average'][$section]) {
             continue;
@@ -1445,7 +1448,6 @@ function encuestascdc_aasort (&$array, $key) {
         $sorter[$ii]=$va[$key];
     }
     asort($sorter,1);
-    //var_dump($sorter);
     foreach ($sorter as $ii => $va) {
         $ret[$ii]=$array[$ii];
     }
@@ -1531,7 +1533,4 @@ function encuestascdc_dibujar_reporte_global_resumen_individual($statsbycourse_a
         </div>
     </div>  ";
     echo $html;
-
-
-
 }
