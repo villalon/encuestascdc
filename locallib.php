@@ -632,13 +632,16 @@ function uol_tabla_respuesta_text($respuesta, $profesor1, $profesor2, $coordinad
 </div>";
 }
 function encuestascdc_dibujar_reporte($stats, $profesores, $profesorindex, $coordinadora, $reporttype, $destinatario) {
+
     foreach($stats['bysection_questions'] as $section => $questions) {
         if(!$sectionstats = $stats['bysection_average'][$section]) {
             continue;
         }
         $sectioncomments = false;
         if(isset($stats['bysection_comments'][$section])) {
-            $sectioncomqments = $stats['bysection_comments'][$section];
+
+            $sectioncomments = $stats['bysection_comments'][$section];
+
         }
         $htmlcomments = '';
         if($sectioncomments) {
@@ -1379,7 +1382,8 @@ function encuestascdc_dibujar_grafico_columnas($datos) {
             // Create chart instance
 
             // Add data
-            chart.data = [';
+            chart.data = [
+                ';
         foreach ($datos as $dato){
             if(!($dato[1] > 4)){
                 //La tabla deberia ir de 1 a 4, cualquier evaluacion por sobre 4 no deberia ser considerada.
@@ -1392,7 +1396,8 @@ function encuestascdc_dibujar_grafico_columnas($datos) {
 
         }
          $html .='
-            ];'; //Fin datos ingresados
+
+                ];'; //Fin datos ingresados
 
 
         $html .='
@@ -1411,6 +1416,8 @@ function encuestascdc_dibujar_grafico_columnas($datos) {
             });
 
             var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+            valueAxis.min = 0;
+            valueAxis.max = 4;
 
             // Create series
             var series = chart.series.push(new am4charts.ColumnSeries());

@@ -160,10 +160,9 @@ if($tiporeporte === 'course') {
         encuestascdc_dibujar_reporte($stats, $teachers, 0, $coordinadora, $tiporeporte, $destinatario);
     }
 } elseif($tiporeporte === 'program') {
-
+var_dump($stats);
     echo "
     <div class='seccion'>
-
         <table>
             <th width='50%'>
                 <div class = 'h5 col-md-6'>
@@ -181,9 +180,8 @@ if($tiporeporte === 'course') {
                 </center>
             </th>
         </table>
-
     </div>
-          <div style = 'page-break-after: always' class='seccion'>";
+    <div style = 'page-break-after: always' class='seccion'>";
 
 
     $resumen = encuestascdc_dibujar_reporte_global($stats, $teachers, 0, $coordinadora, $tiporeporte, $destinatario);
