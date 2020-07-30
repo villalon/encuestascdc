@@ -1227,7 +1227,6 @@ function encuestascdc_dibujar_reporte_global($stats, $profesores, $profesorindex
         </div>
         <div style = 'page-break-after: always' class='seccion'>";
     $resumen = [];
-    var_dump($stats['bysection_comments']);
     foreach($stats['bysection_questions'] as $section => $questions) {
         if(!$sectionstats = $stats['bysection_average'][$section]) {
             continue;
@@ -1240,6 +1239,7 @@ function encuestascdc_dibujar_reporte_global($stats, $profesores, $profesorindex
         if($sectioncomments) {
             $htmlcomments .= encuestascdc_dibuja_comentarios($sectioncomments, $profesores, $profesorindex, $coordinadora);
         }
+
         $sectionstats->promedio = round($sectionstats->promedio, 1);
         list($htmltemp, $titulo, $promedio) = encuestascdc_dibuja_seccion_reporte_global(
             $section,
@@ -1258,6 +1258,7 @@ function encuestascdc_dibujar_reporte_global($stats, $profesores, $profesorindex
     $html.= "
         </div>";
     // Este for each nos imprime todos los Comentarios
+    var_dump($stats['bysection_comments']);
     foreach($stats['bysection_comments'] as $section => $comments) {
         if(isset($stats['bysection_average'][$section])) {
             continue;
@@ -1268,6 +1269,7 @@ function encuestascdc_dibujar_reporte_global($stats, $profesores, $profesorindex
             $profesorindex,
             $coordinadora
             );
+
         list($htmltemp, $titulo, $promedio) = encuestascdc_dibuja_seccion_reporte_global(
             $section,
             $profesores,
