@@ -632,8 +632,6 @@ function uol_tabla_respuesta_text($respuesta, $profesor1, $profesor2, $coordinad
 </div>";
 }
 function encuestascdc_dibujar_reporte($stats, $profesores, $profesorindex, $coordinadora, $reporttype, $destinatario) {
-    mtrace("wah");
-    encuestascdc_myprint_r($stats);
     foreach($stats['bysection_questions'] as $section => $questions) {
         if(!$sectionstats = $stats['bysection_average'][$section]) {
             continue;
