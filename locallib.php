@@ -451,7 +451,14 @@ function encuestascdc_obtiene_estadisticas_por_curso($stats) {
                         if(!isset($coursecomments[$detail['respuesta']->fullname][$detail['respuesta']->pregunta])) {
                             $coursecomments[$detail['respuesta']->fullname][$detail['respuesta']->pregunta] = array();
                         }
-                        $coursecomments[$detail['respuesta']->fullname][$detail['respuesta']->pregunta] = array_merge($coursecomments[$detail['respuesta']->fullname][$detail['respuesta']->pregunta], explode('#',$detail['respuesta']->answers));
+                        $coursecomments[$detail['respuesta']->fullname]
+                                       [$detail['respuesta']->pregunta]
+                                       [$detail['respuesta']->nombre] = array_merge(
+                                                                        $coursecomments
+                                                                            [$detail['respuesta']->fullname]
+                                                                            [$detail['respuesta']->pregunta],
+                                                                            explode('#',$detail['respuesta']->answers)
+                                                                            );
                         $group = $detail['group'];
                     }
                 }
@@ -503,7 +510,15 @@ function encuestascdc_obtiene_estadisticas_por_seccion($stats) {
                         if(!isset($comments[$seccion][$detail['respuesta']->pregunta])) {
                             $comments[$seccion][$detail['respuesta']->pregunta] = array();
                         }
-                        $comments[$seccion][$detail['respuesta']->pregunta] = array_merge($comments[$seccion][$detail['respuesta']->pregunta], explode('#',$detail['respuesta']->answers));
+                        $comments[$seccion]["nombre"] = [$detail['respuesta']->nombre];
+                        $comments[$seccion][$detail['respuesta']->pregunta] = array_merge(
+
+                                                                    $comments[$seccion]
+                                                                    [$detail['respuesta']->pregunta],
+
+
+                                                                    explode('#',$detail['respuesta']->answers)
+                                                                    );
                     }
                 }
             }
