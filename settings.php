@@ -27,7 +27,7 @@ global $PAGE, $CFG;
 
 if (! during_initial_install()) { // do not use during installation
     $frontpagecontext = context_course::instance(SITEID);
-    
+
     if ($hassiteconfig || has_capability('moodle/course:update', $frontpagecontext)) { // needs this condition or there is error on login page
         if ($hassiteconfig) {
             $settings = new admin_settingpage('local_encuestascdc', 'UAI Corporate');
@@ -38,5 +38,6 @@ if (! during_initial_install()) { // do not use during installation
         $ADMIN->add('root', new admin_category('cdc', 'UAI Corporate'));
         $ADMIN->add('cdc', new admin_externalpage('encuestascdc_passwords', 'Contraseñas de encuestas', new moodle_url('/local/encuestascdc/passwords.php'), 'moodle/course:update', false, $frontpagecontext));
         $ADMIN->add('cdc', new admin_externalpage('encuestascdc_qrlogin', 'QR para ingreso', new moodle_url('/local/encuestascdc/qrcode.php'), 'moodle/course:update', false, $frontpagecontext));
+        $ADMIN->add('cdc', new admin_externalpage('encuestascdc_export', 'Exportación de información de encuestas', new moodle_url('/local/encuestascdc/export.php'), 'moodle/course:update', false, $frontpagecontext));
     }
 }
