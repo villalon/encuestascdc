@@ -632,13 +632,17 @@ function uol_tabla_respuesta_text($respuesta, $profesor1, $profesor2, $coordinad
 </div>";
 }
 function encuestascdc_dibujar_reporte($stats, $profesores, $profesorindex, $coordinadora, $reporttype, $destinatario) {
+    mtrace("wah");
+    encuestascdc_myprint_r($stats);
     foreach($stats['bysection_questions'] as $section => $questions) {
         if(!$sectionstats = $stats['bysection_average'][$section]) {
             continue;
         }
         $sectioncomments = false;
         if(isset($stats['bysection_comments'][$section])) {
-            $sectioncomqments = $stats['bysection_comments'][$section];
+
+            $sectioncomments = $stats['bysection_comments'][$section];
+
         }
         $htmlcomments = '';
         if($sectioncomments) {
@@ -1191,7 +1195,7 @@ function encuestascdc_dibuja_portada($questionnaire, $group, $profesores, $profe
  * */
 function encuestascdc_myprint_r($my_array,$titulo="TITULO",$firstIteration=false) {
     //Funcion original: https://stackoverflow.com/questions/1386331/php-print-r-nice-table
-    if(is_object($my_array)){
+    if(is_object($my_array)) {
         $my_array = (array)$my_array;
     }
     if (is_array($my_array)) {
@@ -1199,12 +1203,12 @@ function encuestascdc_myprint_r($my_array,$titulo="TITULO",$firstIteration=false
         if (!$firstIteration)
             echo '<tr><td colspan=2 style="background-color:#333333;"><strong><font color=white>'.$titulo.'</font></strong></td></tr>';
         foreach ($my_array as $clase => $v) {
-            if(!is_numeric($clase)){
+            if(!is_numeric($clase)) {
                 echo '<tr><td valign="top" style="width:40px;background-color:#F0F0F0;">';
-                echo '<strong>' . $clase . " </strong></td><td>";
+                echo '<strong>' . $clase . '</strong></td><td>';
             }
             encuestascdc_myprint_r($v,$clase,true);
-            if(!is_numeric($clase)){
+            if(!is_numeric($clase)) {
                 echo "</td></tr>";
             }
         }
@@ -1216,13 +1220,12 @@ function encuestascdc_myprint_r($my_array,$titulo="TITULO",$firstIteration=false
 
 function encuestascdc_dibujar_reporte_global($stats, $profesores, $profesorindex, $coordinadora, $reporttype, $destinatario) {
     // Este for each nos imprime todos los Promedios
-    $html = '';
+    $html = $htmlcomments = '';
     $html .= "<div class='seccion'>";
     $html .= encuestascdc_tabla_respuestas_reporte_global();
     $html .= "
         </div>
         <div style = 'page-break-after: always' class='seccion'>";
-    $htmlcomments = '';
     $resumen = [];
     foreach($stats['bysection_questions'] as $section => $questions) {
         if(!$sectionstats = $stats['bysection_average'][$section]) {
@@ -1238,26 +1241,50 @@ function encuestascdc_dibujar_reporte_global($stats, $profesores, $profesorindex
         }
 
         $sectionstats->promedio = round($sectionstats->promedio, 1);
-        list($htmltemp, $titulo, $promedio) = encuestascdc_dibuja_seccion_reporte_global($section, $profesores, $profesorindex, $coordinadora, $questions, $stats, null, $reporttype, $destinatario);
+        list($htmltemp, $titulo, $promedio) = encuestascdc_dibuja_seccion_reporte_global(
+            $section,
+            $profesores,
+            $profesorindex,
+            $coordinadora,
+            $questions,
+            $stats,
+            null,
+            $reporttype,
+            $destinatario
+            );
         $html .= $htmltemp;
         $resumen[] = [$titulo,$promedio];
-
     }
     $html.= "
         </div>";
-
-
-    // Este for each nos imprime todos losComentarios
+    // Este for each nos imprime todos los Comentarios
+    //print_r($stats);
+    //print_r($stats['bysection_comments']);
     foreach($stats['bysection_comments'] as $section => $comments) {
         if(isset($stats['bysection_average'][$section])) {
             continue;
         }
-        $htmlcomments .= encuestascdc_dibuja_comentarios($comments, $profesores, $profesorindex, $coordinadora);
-        list($htmltemp, $titulo, $promedio) = encuestascdc_dibuja_seccion_reporte_global($section, $profesores, $profesorindex, $coordinadora, null, null, $htmlcomments, $reporttype, $destinatario);
+        $htmlcomments .= encuestascdc_dibuja_comentarios(
+            $comments,
+            $profesores,
+            $profesorindex,
+            $coordinadora
+            );
+
+        list($htmltemp, $titulo, $promedio) = encuestascdc_dibuja_seccion_reporte_global(
+            $section,
+            $profesores,
+            $profesorindex,
+            $coordinadora,
+            null,
+            null,
+            $htmlcomments,
+            $reporttype,
+            $destinatario
+            );
         $html .=  $htmltemp;
     }
     echo $html;
-
     echo '';
     return $resumen;
 }
@@ -1269,13 +1296,7 @@ function encuestascdc_dibuja_seccion_reporte_global($title, $profesores, $profes
         $i=0;
         $min = $max = $promedio =[];
         foreach($questions as $q) {
-            $index = 0;
-            if(strpos($q['pregunta'], 'Profesor/Facilitador') > 0) {
-                $index = intval(substr($q['pregunta'], -1));
-                if($profesorindex > 0 && $profesorindex !== $index) {
-                    continue;
-                }
-            }
+
             $stats = $q['respuestas'];
             $min[] = $stats->min;
             $max[] = $stats->max;
@@ -1322,20 +1343,20 @@ function encuestascdc_tabla_respuestas_reporte_global($header = true, $min = 0,$
 
     $tablahtml = '<table class="datos">';
     if($header) {
-        $tablahtml .= "<tr><td width='50%'><b>ASPECTOS EVALUADOS</b</td>
+        $tablahtml .= "<tr>
+                            <td width='50%'><b>ASPECTOS EVALUADOS</b</td>
                            <td width='25%'><b>POR PREGUNTA</b></td>
                            <td width='25%'><b>PROMEDIO</b></td>
                        </tr>";
         $tablahtml .= "</table>";
         return $tablahtml;
     } else {
-    $tablahtml .= '<tr><td style="width:50%"> '.$titulo.' </td>';
-    $tablahtml .= '<td style="width:25%"> Min :'.$min.'<br>Max :'.$max.'</td>';
-    $tablahtml .= '<td style="width:25%" class="promedio">'.$promedio.'</td></tr></table>';
+        $tablahtml .= '<tr><td style="width:50%"> '.$titulo.' </td>';
+        $tablahtml .= '<td style="width:25%"> Min :'.$min.'<br>Max :'.$max.'</td>';
+        $tablahtml .= '<td style="width:25%" class="promedio">'.$promedio.'</td></tr></table>';
     }
     return array($tablahtml, $promedio);
 }
-
 
 function encuestascdc_dibujar_grafico_columnas($datos) {
     //formato de datos, arreglo de [[String, Int]]
@@ -1366,7 +1387,8 @@ function encuestascdc_dibujar_grafico_columnas($datos) {
             // Create chart instance
 
             // Add data
-            chart.data = [';
+            chart.data = [
+                ';
         foreach ($datos as $dato){
             if(!($dato[1] > 4)){
                 //La tabla deberia ir de 1 a 4, cualquier evaluacion por sobre 4 no deberia ser considerada.
@@ -1379,7 +1401,8 @@ function encuestascdc_dibujar_grafico_columnas($datos) {
 
         }
          $html .='
-            ];'; //Fin datos ingresados
+
+                ];'; //Fin datos ingresados
 
 
         $html .='
@@ -1398,6 +1421,8 @@ function encuestascdc_dibujar_grafico_columnas($datos) {
             });
 
             var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+            valueAxis.min = 0;
+            valueAxis.max = 4;
 
             // Create series
             var series = chart.series.push(new am4charts.ColumnSeries());
@@ -1417,6 +1442,23 @@ function encuestascdc_dibujar_grafico_columnas($datos) {
         echo $html;
 }
 
+function encuestascdc_aasort (&$array, $key) {
+    $sorter=array();
+    $ret=array();
+    reset($array);
+    foreach ($array as $ii => $va) {
+
+        $sorter[$ii]=$va[$key];
+    }
+    asort($sorter,1);
+    foreach ($sorter as $ii => $va) {
+        $ret[$ii]=$array[$ii];
+    }
+    $array=$ret;
+}
+
+
+
 function encuestascdc_dibujar_reporte_global_resumen_individual($statsbycourse_average) {
     $tablahtml =
     '<div class="seccion">
@@ -1434,7 +1476,7 @@ function encuestascdc_dibujar_reporte_global_resumen_individual($statsbycourse_a
         <table class="datos">
     ';
     $prom_autoevaluacion = $prom_cursoTaller = $prom_profesor = [];
-
+    encuestascdc_aasort($statsbycourse_average,"CURSO");
     foreach($statsbycourse_average as $section => $data) {
         if ($titulo = $data['CURSO']) {
 
@@ -1472,30 +1514,26 @@ function encuestascdc_dibujar_reporte_global_resumen_individual($statsbycourse_a
         }
     }
 
-
     $prom_profesor          = encuestascdc_array_average($prom_profesor);
     $prom_cursoTaller       = encuestascdc_array_average($prom_cursoTaller);
     $prom_autoevaluacion    = encuestascdc_array_average($prom_autoevaluacion);
-
-    $tablahtml .= '
+    $tablahtml .=
+        '
         </table>
-    </div><br>
+        </div><br>
         <table class="datos">
         <tr>
             <td style="width:55%">TOTAL</td>
             <td style="width:15%">'.$prom_autoevaluacion.'</td>
             <td style="width:15%">'.$prom_cursoTaller.'</td>
             <td style="width:15%">'.$prom_profesor.'</td></tr>
-        </table>';
-
+        </table>
+        ';
     $html = "
     <div class='row row-questions'>
         <div class='preguntas col-md-12 col-sm-12'>
             $tablahtml
         </div>
-    </div>";
+    </div>  ";
     echo $html;
-
-
-
 }
