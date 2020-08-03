@@ -1558,9 +1558,7 @@ function encuestascdc_obtiene_estadisticas_por_seccion_global($stats) {
         foreach($statcourse as $seccion => $statstype) {
             foreach($statstype as $type => $statdetail) {
                 $nombre_encuestapregunta = strval([$detail['respuesta']->nombre][0]);
-                var_dump($nombre_encuestapregunta);
-                //strpos($mystring, $word)
-
+                //var_dump($nombre_encuestapregunta);
                 if($type === 'Rate (scale 1..5)') {
 
                     if(!isset($seccionstats[$seccion])) {
@@ -1574,9 +1572,10 @@ function encuestascdc_obtiene_estadisticas_por_seccion_global($stats) {
                         $preguntas[$seccion][] = array('pregunta'=>$detail['respuesta']->opcion,'respuestas'=>$detail['stats']);
                     }
                 } else {
+                    //Verificamos que exista la palabra GLOBAL tanto con G mayuscula como minuscula.
+                    $pos1 = strpos($nombre_encuestapregunta, "Global");
                     if(isset($nombre_encuestapregunta)
-                    and strpos($nombre_encuestapregunta, "Global")
-                    and strpos($nombre_encuestapregunta, "global")
+                    and $pos1 !== false
                     ) {
                         if(!isset($comments[$seccion])) {
                             $comments[$seccion] = array();
