@@ -516,8 +516,9 @@ function encuestascdc_obtiene_estadisticas_por_seccion($stats) {
                         $comments[$seccion][$detail['respuesta']->pregunta] = array_merge(
 
                                                                     $comments[$seccion]
-                                                                    [$detail['respuesta']->pregunta],[$detail['respuesta']->nombre],
-                                                                    explode('#',$detail['respuesta']->answers)
+                                                                    [$detail['respuesta']->pregunta],
+                                                                    explode('#',$detail['respuesta']->answers),
+                                                                    [$detail['respuesta']->nombre]
                                                                     );
                         var_dump($comments);
                     }
