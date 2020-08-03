@@ -1557,21 +1557,26 @@ function encuestascdc_obtiene_estadisticas_por_seccion_global($stats) {
     foreach($stats as $courseid => $statcourse) {
         foreach($statcourse as $seccion => $statstype) {
             foreach($statstype as $type => $statdetail) {
-                var_dump([$detail['respuesta']->nombre]);
-                //if(nombre contiene wea) {
-                    if($type === 'Rate (scale 1..5)') {
+                $nombre_encuestapregunta = [$detail['respuesta']->nombre];
+                //strpos($mystring, $word)
 
-                        if(!isset($seccionstats[$seccion])) {
-                            $seccionstats[$seccion] = encuestascdc_crea_estadistica();
-                        }
-                        if(!isset($preguntas[$seccion])) {
-                            $preguntas[$seccion] = array();
-                        }
-                        foreach($statdetail as $detail) {
-                            $seccionstats[$seccion] = encuestascdc_suma_estadisticas($seccionstats[$seccion], $detail['stats']);
-                            $preguntas[$seccion][] = array('pregunta'=>$detail['respuesta']->opcion,'respuestas'=>$detail['stats']);
-                        }
-                    } else {
+                if($type === 'Rate (scale 1..5)') {
+
+                    if(!isset($seccionstats[$seccion])) {
+                        $seccionstats[$seccion] = encuestascdc_crea_estadistica();
+                    }
+                    if(!isset($preguntas[$seccion])) {
+                        $preguntas[$seccion] = array();
+                    }
+                    foreach($statdetail as $detail) {
+                        $seccionstats[$seccion] = encuestascdc_suma_estadisticas($seccionstats[$seccion], $detail['stats']);
+                        $preguntas[$seccion][] = array('pregunta'=>$detail['respuesta']->opcion,'respuestas'=>$detail['stats']);
+                    }
+                } else {
+                    if(isset($nombre_encuestapregunta)
+                    and strpos($nombre_encuestapregunta, "Global")
+                    and strpos($nombre_encuestapregunta, "global")
+                    ) {
                         if(!isset($comments[$seccion])) {
                             $comments[$seccion] = array();
                         }
@@ -1587,7 +1592,7 @@ function encuestascdc_obtiene_estadisticas_por_seccion_global($stats) {
                                                                         );
                         }
                     }
-                //}
+                }
             }
         }
     }
