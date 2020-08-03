@@ -517,16 +517,15 @@ function encuestascdc_obtiene_estadisticas_por_seccion($stats) {
 
                                                                     $comments[$seccion]
                                                                     [$detail['respuesta']->pregunta],
-                                                                    explode('#',$detail['respuesta']->answers),
-                                                                    [$detail['respuesta']->nombre]
+                                                                    explode('#',$detail['respuesta']->answers)
                                                                     );
-                        var_dump($comments);
+                        $commentBETA = array("nombre" => [$detail['respuesta']->nombre], "comments" => $comments[$seccion][$detail['respuesta']->pregunta]);
                     }
                 }
             }
         }
     }
-    return array($seccionstats, $preguntas, $comments);
+    return array($seccionstats, $preguntas, $comments, $commentBETA);
 }
 
 function encuestascdc_crea_estadistica() {
