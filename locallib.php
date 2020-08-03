@@ -1557,7 +1557,8 @@ function encuestascdc_obtiene_estadisticas_por_seccion_global($stats) {
     foreach($stats as $courseid => $statcourse) {
         foreach($statcourse as $seccion => $statstype) {
             foreach($statstype as $type => $statdetail) {
-                $nombre_encuestapregunta = [$detail['respuesta']->nombre];
+                $nombre_encuestapregunta = strval([$detail['respuesta']->nombre][0]);
+                var_dump($nombre_encuestapregunta);
                 //strpos($mystring, $word)
 
                 if($type === 'Rate (scale 1..5)') {
