@@ -453,7 +453,7 @@ function encuestascdc_obtiene_estadisticas_por_curso($stats) {
                         }
                         $coursecomments[$detail['respuesta']->fullname]
                                        [$detail['respuesta']->pregunta]
-                                       [$detail['respuesta']->nombre] = array_merge(
+                                        = array_merge(
                                                                         $coursecomments
                                                                             [$detail['respuesta']->fullname]
                                                                             [$detail['respuesta']->pregunta],
