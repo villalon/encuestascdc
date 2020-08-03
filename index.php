@@ -160,9 +160,9 @@ if($tiporeporte === 'course') {
         encuestascdc_dibujar_reporte($stats, $teachers, 0, $coordinadora, $tiporeporte, $destinatario);
     }
 } elseif($tiporeporte === 'program') {
-   /*($stats['bysection_comments']);
+   ($stats['bysection_comments']);
    var_dump("SEPARADOR#");
-   print_r($stats['bysection_comments']);*/
+   print_r($stats['bysection_comments']);
     echo "
     <div class='seccion'>
         <table>
