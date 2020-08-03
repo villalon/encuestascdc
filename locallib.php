@@ -510,7 +510,7 @@ function encuestascdc_obtiene_estadisticas_por_seccion($stats) {
                         if(!isset($comments[$seccion][$detail['respuesta']->pregunta])) {
                             $comments[$seccion][$detail['respuesta']->pregunta] = array();
                         }
-                        $comments[$seccion]["nombre"] = [$detail['respuesta']->nombre];
+                        $comments["nombre"] = [$detail['respuesta']->nombre];
                         $comments[$seccion][$detail['respuesta']->pregunta] = array_merge(
 
                                                                     $comments[$seccion]

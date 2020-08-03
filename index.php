@@ -160,9 +160,9 @@ if($tiporeporte === 'course') {
         encuestascdc_dibujar_reporte($stats, $teachers, 0, $coordinadora, $tiporeporte, $destinatario);
     }
 } elseif($tiporeporte === 'program') {
-   //print_r($stats);
+   /*($stats['bysection_comments']);
    var_dump("SEPARADOR#");
-   print_r($stats['bysection_comments']);
+   print_r($stats['bysection_comments']);*/
     echo "
     <div class='seccion'>
         <table>
@@ -226,36 +226,6 @@ if($tiporeporte === 'course') {
         </table>
     </div>";
     encuestascdc_dibujar_reporte_global_resumen_individual($statsbycourse_average);
-
-
-
-
-   /* echo("------------------------------");
-    encuestascdc_myprint_r($statsbycourse_average,"Promedio Curso");
-        echo("------------------------------");
-    encuestascdc_myprint_r($statsbycourse_comments,"Comentarios Curso");
-        echo("------------------------------");
-    encuestascdc_myprint_r($statsbysection_average,"Promedio Sección");
-        echo("------------------------------");
-    encuestascdc_myprint_r($statsbysection_questions,"Preguntas Sección");
-        echo("------------------------------");
-    encuestascdc_myprint_r($statsbysection_comments,"Comentarios Sección");
-    encuestascdc_myprint_r($stats);
-    echo("------------------------------");
-    echo '<div style=" resize: both; "><pre>' . print_r($teachers, true) . '</pre></div>';
-    echo("------------------------------");
-    echo '<div style=" resize: both; "><pre>' . print_r($statsbycourse_average, true) . '</pre></div>';*/
-    /*echo '<hr>';
-    echo '<div style=" resize: both; "><pre>' . print_r($statsbycourse_comments, true) . '</pre></div>';
-    echo '<hr>';
-    echo '<div style=" resize: both; "><pre>' . print_r($statsbysection_average, true) . '</pre></div>';
-    echo '<hr>';
-    echo '<div style=" resize: both; "><pre>' . print_r($statsbysection_questions, true) . '</pre></div>';
-    echo '<hr>';
-    echo '<div style=" resize: both; "><pre>' . print_r($statsbysection_comments, true) . '</pre></div>';
-    echo '<hr>';
-    echo '<div style=" resize: both; "><pre>' . print_r($stats, true) . '</pre></div>';
-    echo '<hr>';*/
 
 
 } else {
