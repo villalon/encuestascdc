@@ -136,15 +136,15 @@ $stats = encuestascdc_obtiene_estadisticas($questionnaires);
 
 $teachers = encuestascdc_obtiene_profesores($stats, $profesor1, $profesor2, $profesor3);
 
-list($statsbycourse_average, $statsbycourse_comments) = encuestascdc_obtiene_estadisticas_por_curso($stats);
-list($statsbysection_average, $statsbysection_questions, $statsbysection_comments, $statsbysection_commentsBETA) = encuestascdc_obtiene_estadisticas_por_seccion($stats);
-$stats['bycourse_average'] = $statsbycourse_average;
-$stats['bycourse_comments'] = $statsbycourse_comments;
-$stats['bysection_average'] = $statsbysection_average;
-$stats['bysection_comments'] = $statsbysection_comments;
-$stats['bysection_questions'] = $statsbysection_questions;
-$stats['bysection_commentsBETA'] = $statsbysection_commentsBETA;
+    list($statsbycourse_average, $statsbycourse_comments) = encuestascdc_obtiene_estadisticas_por_curso($stats);
 if($tiporeporte === 'course') {
+
+    list($statsbysection_average, $statsbysection_questions, $statsbysection_comments) = encuestascdc_obtiene_estadisticas_por_seccion($stats);
+    $stats['bycourse_average'] = $statsbycourse_average;
+    $stats['bycourse_comments'] = $statsbycourse_comments;
+    $stats['bysection_average'] = $statsbysection_average;
+    $stats['bysection_comments'] = $statsbysection_comments;
+    $stats['bysection_questions'] = $statsbysection_questions;
     // Se obtienen los gráficos y las secciones de la encuesta
     $coursestats = $statsbycourse_average[0];
     if($destinatario === 'teacher') {
@@ -161,8 +161,13 @@ if($tiporeporte === 'course') {
         encuestascdc_dibujar_reporte($stats, $teachers, 0, $coordinadora, $tiporeporte, $destinatario);
     }
 } elseif($tiporeporte === 'program') {
+    list($statsbysection_average, $statsbysection_questions, $statsbysection_comments) = encuestascdc_obtiene_estadisticas_por_seccion_global($stats);
+    $stats['bycourse_average'] = $statsbycourse_average;
+    $stats['bycourse_comments'] = $statsbycourse_comments;
+    $stats['bysection_average'] = $statsbysection_average;
+    $stats['bysection_comments'] = $statsbysection_comments;
+    $stats['bysection_questions'] = $statsbysection_questions;
 
-   print_r($stats['bysection_commentsBETA']);
     echo "
     <div class='seccion'>
         <table>
@@ -187,7 +192,6 @@ if($tiporeporte === 'course') {
 
 
     $resumen = encuestascdc_dibujar_reporte_global($stats, $teachers, 0, $coordinadora, $tiporeporte, $destinatario);
-    //var_dump($stats);
     echo "</div><br>
         <div class = 'row'>
             <div class = 'h5 col-md-6'>RESULTADOS ENCUESTAS DE SATISFACCIÓN

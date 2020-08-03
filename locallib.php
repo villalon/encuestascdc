@@ -514,18 +514,16 @@ function encuestascdc_obtiene_estadisticas_por_seccion($stats) {
 
                         //$comments["nombre"] = ;
                         $comments[$seccion][$detail['respuesta']->pregunta] = array_merge(
-
                                                                     $comments[$seccion]
                                                                     [$detail['respuesta']->pregunta],
                                                                     explode('#',$detail['respuesta']->answers)
                                                                     );
-                        $commentBETA = array("nombre" => [$detail['respuesta']->nombre], "comments" => $comments[$seccion][$detail['respuesta']->pregunta]);
                     }
                 }
             }
         }
     }
-    return array($seccionstats, $preguntas, $comments, $commentBETA);
+    return array($seccionstats, $preguntas, $comments);
 }
 
 function encuestascdc_crea_estadistica() {
@@ -1550,4 +1548,48 @@ function encuestascdc_dibujar_reporte_global_resumen_individual($statsbycourse_a
         </div>
     </div>  ";
     echo $html;
+}
+
+function encuestascdc_obtiene_estadisticas_por_seccion_global($stats) {
+    $seccionstats = array();
+    $preguntas = array();
+    $comments = array();
+    foreach($stats as $courseid => $statcourse) {
+        foreach($statcourse as $seccion => $statstype) {
+            foreach($statstype as $type => $statdetail) {
+                var_dump([$detail['respuesta']->nombre]);
+                //if(nombre contiene wea) {
+                    if($type === 'Rate (scale 1..5)') {
+
+                        if(!isset($seccionstats[$seccion])) {
+                            $seccionstats[$seccion] = encuestascdc_crea_estadistica();
+                        }
+                        if(!isset($preguntas[$seccion])) {
+                            $preguntas[$seccion] = array();
+                        }
+                        foreach($statdetail as $detail) {
+                            $seccionstats[$seccion] = encuestascdc_suma_estadisticas($seccionstats[$seccion], $detail['stats']);
+                            $preguntas[$seccion][] = array('pregunta'=>$detail['respuesta']->opcion,'respuestas'=>$detail['stats']);
+                        }
+                    } else {
+                        if(!isset($comments[$seccion])) {
+                            $comments[$seccion] = array();
+                        }
+                        foreach($statdetail as $detail) {
+                            if(!isset($comments[$seccion][$detail['respuesta']->pregunta])) {
+                                $comments[$seccion][$detail['respuesta']->pregunta] = array();
+                            }
+
+                            $comments[$seccion][$detail['respuesta']->pregunta] = array_merge(
+                                                                        $comments[$seccion]
+                                                                        [$detail['respuesta']->pregunta],
+                                                                        explode('#',$detail['respuesta']->answers)
+                                                                        );
+                        }
+                    }
+                //}
+            }
+        }
+    }
+    return array($seccionstats, $preguntas, $comments);
 }
