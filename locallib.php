@@ -453,7 +453,8 @@ function encuestascdc_obtiene_estadisticas_por_curso($stats) {
                         }
                         $coursecomments[$detail['respuesta']->fullname]
                                        [$detail['respuesta']->pregunta]
-                                        = array_merge(
+                                       //[$detail['respuesta']->nombre]
+                                       = array_merge(
                                                                         $coursecomments
                                                                             [$detail['respuesta']->fullname]
                                                                             [$detail['respuesta']->pregunta],
@@ -510,7 +511,7 @@ function encuestascdc_obtiene_estadisticas_por_seccion($stats) {
                         if(!isset($comments[$seccion][$detail['respuesta']->pregunta])) {
                             $comments[$seccion][$detail['respuesta']->pregunta] = array();
                         }
-                        $comments["nombre"] = [$detail['respuesta']->nombre];
+                        //$comments["nombre"] = [$detail['respuesta']->nombre];
                         $comments[$seccion][$detail['respuesta']->pregunta] = array_merge(
 
                                                                     $comments[$seccion]
