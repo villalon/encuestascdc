@@ -511,15 +511,15 @@ function encuestascdc_obtiene_estadisticas_por_seccion($stats) {
                         if(!isset($comments[$seccion][$detail['respuesta']->pregunta])) {
                             $comments[$seccion][$detail['respuesta']->pregunta] = array();
                         }
-                        //$comments["nombre"] = [$detail['respuesta']->nombre];
+
+                        //$comments["nombre"] = ;
                         $comments[$seccion][$detail['respuesta']->pregunta] = array_merge(
 
                                                                     $comments[$seccion]
-                                                                    [$detail['respuesta']->pregunta],
-
-
+                                                                    [$detail['respuesta']->pregunta],[$detail['respuesta']->nombre],
                                                                     explode('#',$detail['respuesta']->answers)
                                                                     );
+                        var_dump($comments);
                     }
                 }
             }
