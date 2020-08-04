@@ -617,7 +617,7 @@ function uol_tabla_contenidos(array $secciones, int $activo) {
 function uol_tabla_respuesta_text($respuesta, $profesor1, $profesor2, $coordinadora) {
     $answers = explode('#',$respuesta->answers);
     $numanswers = count($answers);
-    $answers = "- " . implode(" (sic) \n- ", $answers) . " (SIC)";
+    $answers = "- " . implode(" (sic) \n- ", $answers);
     $answers = strtoupper(str_replace(array('á','é','í','ó','ú','ñ'), array('Á','É','Í','Ó','Ú','Ñ'), $answers));
     $pregunta = $respuesta->pregunta;
     if(stripos($respuesta->pregunta, "Profesor 1") !== false) {
