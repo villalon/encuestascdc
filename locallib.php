@@ -698,10 +698,10 @@ function encuestascdc_dibuja_comentarios($sectioncomments, $profesores, $profeso
         foreach($commentsarr as $comment) {
             $respuesta = $DB->get_record('questionnaire_response_text',array('id' => $comment));
             if(isset($respuesta->response))
-                $respuestas[] = str_replace(" (SIC)","",$respuesta->response);
+                $respuestas[] = $respuesta->response;
         }
 
-        $answers = "- " . implode(" (sic) \n- ", $respuestas) . " (SIC)";
+        $answers = "- " . implode(" (sic) \n- ", $respuestas);
         $answers = strtoupper(str_replace(array('á','é','í','ó','ú','ñ'), array('Á','É','Í','Ó','Ú','Ñ'), $answers));
         $htmlcomments .= "
         <div class='row'>
