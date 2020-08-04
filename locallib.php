@@ -617,7 +617,7 @@ function uol_tabla_contenidos(array $secciones, int $activo) {
 function uol_tabla_respuesta_text($respuesta, $profesor1, $profesor2, $coordinadora) {
     $answers = explode('#',$respuesta->answers);
     $numanswers = count($answers);
-    $answers = "- " . implode(" (sic) \n- ", $answers);
+    $answers = "- " . implode("\n- ", $answers);
     $answers = strtoupper(str_replace(array('á','é','í','ó','ú','ñ'), array('Á','É','Í','Ó','Ú','Ñ'), $answers));
     $pregunta = $respuesta->pregunta;
     if(stripos($respuesta->pregunta, "Profesor 1") !== false) {
@@ -701,7 +701,7 @@ function encuestascdc_dibuja_comentarios($sectioncomments, $profesores, $profeso
                 $respuestas[] = $respuesta->response;
         }
 
-        $answers = "- " . implode(" (sic) \n- ", $respuestas);
+        $answers = "- " . implode(" \n- ", $respuestas);
         $answers = strtoupper(str_replace(array('á','é','í','ó','ú','ñ'), array('Á','É','Í','Ó','Ú','Ñ'), $answers));
         $htmlcomments .= "
         <div class='row'>
