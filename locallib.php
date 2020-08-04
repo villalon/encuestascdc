@@ -486,9 +486,7 @@ function encuestascdc_obtiene_estadisticas_por_curso($stats) {
 }
 
 function encuestascdc_obtiene_estadisticas_por_seccion($stats) {
-    $seccionstats = array();
-    $preguntas = array();
-    $comments = array();
+    $seccionstats = $preguntas = $comments = array();
     foreach($stats as $courseid => $statcourse) {
         foreach($statcourse as $seccion => $statstype) {
             foreach($statstype as $type => $statdetail) {
@@ -700,7 +698,7 @@ function encuestascdc_dibuja_comentarios($sectioncomments, $profesores, $profeso
         foreach($commentsarr as $comment) {
             $respuesta = $DB->get_record('questionnaire_response_text',array('id' => $comment));
             if(isset($respuesta->response))
-                $respuestas[] = $respuesta->response;
+                $respuestas[] = str_replace(" (SIC)","",$respuesta->response);
         }
 
         $answers = "- " . implode(" (sic) \n- ", $respuestas) . " (SIC)";
@@ -1551,9 +1549,7 @@ function encuestascdc_dibujar_reporte_global_resumen_individual($statsbycourse_a
 }
 
 function encuestascdc_obtiene_estadisticas_por_seccion_global($stats) {
-    $seccionstats = array();
-    $preguntas = array();
-    $comments = array();
+    $seccionstats = $preguntas = $comments = array();
     $nombre_encuestapregunta = "";
     foreach($stats as $courseid => $statcourse) {
         foreach($statcourse as $seccion => $statstype) {
@@ -1561,7 +1557,6 @@ function encuestascdc_obtiene_estadisticas_por_seccion_global($stats) {
                 if(isset($detail['respuesta'])) {
                     $nombre_encuestapregunta  = strval([$detail['respuesta']->nombre][0]);
                 }
-                //var_dump($nombre_encuestapregunta);
                 if($type === 'Rate (scale 1..5)') {
 
                     if(!isset($seccionstats[$seccion])) {
