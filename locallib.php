@@ -451,7 +451,15 @@ function encuestascdc_obtiene_estadisticas_por_curso($stats) {
                         if(!isset($coursecomments[$detail['respuesta']->fullname][$detail['respuesta']->pregunta])) {
                             $coursecomments[$detail['respuesta']->fullname][$detail['respuesta']->pregunta] = array();
                         }
-                        $coursecomments[$detail['respuesta']->fullname][$detail['respuesta']->pregunta] = array_merge($coursecomments[$detail['respuesta']->fullname][$detail['respuesta']->pregunta], explode('#',$detail['respuesta']->answers));
+                        $coursecomments[$detail['respuesta']->fullname]
+                                       [$detail['respuesta']->pregunta]
+                                       //[$detail['respuesta']->nombre]
+                                       = array_merge(
+                                                                        $coursecomments
+                                                                            [$detail['respuesta']->fullname]
+                                                                            [$detail['respuesta']->pregunta],
+                                                                            explode('#',$detail['respuesta']->answers)
+                                                                            );
                         $group = $detail['group'];
                     }
                 }
@@ -478,9 +486,7 @@ function encuestascdc_obtiene_estadisticas_por_curso($stats) {
 }
 
 function encuestascdc_obtiene_estadisticas_por_seccion($stats) {
-    $seccionstats = array();
-    $preguntas = array();
-    $comments = array();
+    $seccionstats = $preguntas = $comments = array();
     foreach($stats as $courseid => $statcourse) {
         foreach($statcourse as $seccion => $statstype) {
             foreach($statstype as $type => $statdetail) {
@@ -503,7 +509,13 @@ function encuestascdc_obtiene_estadisticas_por_seccion($stats) {
                         if(!isset($comments[$seccion][$detail['respuesta']->pregunta])) {
                             $comments[$seccion][$detail['respuesta']->pregunta] = array();
                         }
-                        $comments[$seccion][$detail['respuesta']->pregunta] = array_merge($comments[$seccion][$detail['respuesta']->pregunta], explode('#',$detail['respuesta']->answers));
+
+                        //$comments["nombre"] = ;
+                        $comments[$seccion][$detail['respuesta']->pregunta] = array_merge(
+                                                                    $comments[$seccion]
+                                                                    [$detail['respuesta']->pregunta],
+                                                                    explode('#',$detail['respuesta']->answers)
+                                                                    );
                     }
                 }
             }
@@ -605,7 +617,7 @@ function uol_tabla_contenidos(array $secciones, int $activo) {
 function uol_tabla_respuesta_text($respuesta, $profesor1, $profesor2, $coordinadora) {
     $answers = explode('#',$respuesta->answers);
     $numanswers = count($answers);
-    $answers = "- " . implode(" (sic) \n- ", $answers) . " (SIC)";
+    $answers = "- " . implode("\n- ", $answers);
     $answers = strtoupper(str_replace(array('á','é','í','ó','ú','ñ'), array('Á','É','Í','Ó','Ú','Ñ'), $answers));
     $pregunta = $respuesta->pregunta;
     if(stripos($respuesta->pregunta, "Profesor 1") !== false) {
@@ -632,8 +644,6 @@ function uol_tabla_respuesta_text($respuesta, $profesor1, $profesor2, $coordinad
 </div>";
 }
 function encuestascdc_dibujar_reporte($stats, $profesores, $profesorindex, $coordinadora, $reporttype, $destinatario) {
-    mtrace("wah");
-    encuestascdc_myprint_r($stats);
     foreach($stats['bysection_questions'] as $section => $questions) {
         if(!$sectionstats = $stats['bysection_average'][$section]) {
             continue;
@@ -691,7 +701,7 @@ function encuestascdc_dibuja_comentarios($sectioncomments, $profesores, $profeso
                 $respuestas[] = $respuesta->response;
         }
 
-        $answers = "- " . implode(" (sic) \n- ", $respuestas) . " (SIC)";
+        $answers = "- " . implode(" \n- ", $respuestas);
         $answers = strtoupper(str_replace(array('á','é','í','ó','ú','ñ'), array('Á','É','Í','Ó','Ú','Ñ'), $answers));
         $htmlcomments .= "
         <div class='row'>
@@ -1536,4 +1546,53 @@ function encuestascdc_dibujar_reporte_global_resumen_individual($statsbycourse_a
         </div>
     </div>  ";
     echo $html;
+}
+
+function encuestascdc_obtiene_estadisticas_por_seccion_global($stats) {
+    $seccionstats = $preguntas = $comments = array();
+    $nombre_encuestapregunta = "";
+    foreach($stats as $courseid => $statcourse) {
+        foreach($statcourse as $seccion => $statstype) {
+            foreach($statstype as $type => $statdetail) {
+                if(isset($detail['respuesta'])) {
+                    $nombre_encuestapregunta  = strval([$detail['respuesta']->nombre][0]);
+                }
+                if($type === 'Rate (scale 1..5)') {
+
+                    if(!isset($seccionstats[$seccion])) {
+                        $seccionstats[$seccion] = encuestascdc_crea_estadistica();
+                    }
+                    if(!isset($preguntas[$seccion])) {
+                        $preguntas[$seccion] = array();
+                    }
+                    foreach($statdetail as $detail) {
+                        $seccionstats[$seccion] = encuestascdc_suma_estadisticas($seccionstats[$seccion], $detail['stats']);
+                        $preguntas[$seccion][] = array('pregunta'=>$detail['respuesta']->opcion,'respuestas'=>$detail['stats']);
+                    }
+                } else {
+                    //Verificamos que exista la palabra GLOBAL tanto con G mayuscula como minuscula.
+                    $pos1 = strpos($nombre_encuestapregunta, "Global");
+                    if(isset($nombre_encuestapregunta)
+                    and $pos1 !== false
+                    ) {
+                        if(!isset($comments[$seccion])) {
+                            $comments[$seccion] = array();
+                        }
+                        foreach($statdetail as $detail) {
+                            if(!isset($comments[$seccion][$detail['respuesta']->pregunta])) {
+                                $comments[$seccion][$detail['respuesta']->pregunta] = array();
+                            }
+
+                            $comments[$seccion][$detail['respuesta']->pregunta] = array_merge(
+                                                                        $comments[$seccion]
+                                                                        [$detail['respuesta']->pregunta],
+                                                                        explode('#',$detail['respuesta']->answers)
+                                                                        );
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return array($seccionstats, $preguntas, $comments);
 }

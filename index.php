@@ -136,14 +136,15 @@ $stats = encuestascdc_obtiene_estadisticas($questionnaires);
 
 $teachers = encuestascdc_obtiene_profesores($stats, $profesor1, $profesor2, $profesor3);
 
-list($statsbycourse_average, $statsbycourse_comments) = encuestascdc_obtiene_estadisticas_por_curso($stats);
-list($statsbysection_average, $statsbysection_questions, $statsbysection_comments) = encuestascdc_obtiene_estadisticas_por_seccion($stats);
-$stats['bycourse_average'] = $statsbycourse_average;
-$stats['bycourse_comments'] = $statsbycourse_comments;
-$stats['bysection_average'] = $statsbysection_average;
-$stats['bysection_comments'] = $statsbysection_comments;
-$stats['bysection_questions'] = $statsbysection_questions;
+    list($statsbycourse_average, $statsbycourse_comments) = encuestascdc_obtiene_estadisticas_por_curso($stats);
 if($tiporeporte === 'course') {
+
+    list($statsbysection_average, $statsbysection_questions, $statsbysection_comments) = encuestascdc_obtiene_estadisticas_por_seccion($stats);
+    $stats['bycourse_average'] = $statsbycourse_average;
+    $stats['bycourse_comments'] = $statsbycourse_comments;
+    $stats['bysection_average'] = $statsbysection_average;
+    $stats['bysection_comments'] = $statsbysection_comments;
+    $stats['bysection_questions'] = $statsbysection_questions;
     // Se obtienen los gráficos y las secciones de la encuesta
     $coursestats = $statsbycourse_average[0];
     if($destinatario === 'teacher') {
@@ -160,6 +161,12 @@ if($tiporeporte === 'course') {
         encuestascdc_dibujar_reporte($stats, $teachers, 0, $coordinadora, $tiporeporte, $destinatario);
     }
 } elseif($tiporeporte === 'program') {
+    list($statsbysection_average, $statsbysection_questions, $statsbysection_comments) = encuestascdc_obtiene_estadisticas_por_seccion_global($stats);
+    $stats['bycourse_average'] = $statsbycourse_average;
+    $stats['bycourse_comments'] = $statsbycourse_comments;
+    $stats['bysection_average'] = $statsbysection_average;
+    $stats['bysection_comments'] = $statsbysection_comments;
+    $stats['bysection_questions'] = $statsbysection_questions;
 
     echo "
     <div class='seccion'>
@@ -185,7 +192,6 @@ if($tiporeporte === 'course') {
 
 
     $resumen = encuestascdc_dibujar_reporte_global($stats, $teachers, 0, $coordinadora, $tiporeporte, $destinatario);
-    //var_dump($stats);
     echo "</div><br>
         <div class = 'row'>
             <div class = 'h5 col-md-6'>RESULTADOS ENCUESTAS DE SATISFACCIÓN
@@ -224,36 +230,6 @@ if($tiporeporte === 'course') {
         </table>
     </div>";
     encuestascdc_dibujar_reporte_global_resumen_individual($statsbycourse_average);
-
-
-
-
-   /* echo("------------------------------");
-    encuestascdc_myprint_r($statsbycourse_average,"Promedio Curso");
-        echo("------------------------------");
-    encuestascdc_myprint_r($statsbycourse_comments,"Comentarios Curso");
-        echo("------------------------------");
-    encuestascdc_myprint_r($statsbysection_average,"Promedio Sección");
-        echo("------------------------------");
-    encuestascdc_myprint_r($statsbysection_questions,"Preguntas Sección");
-        echo("------------------------------");
-    encuestascdc_myprint_r($statsbysection_comments,"Comentarios Sección");
-    encuestascdc_myprint_r($stats);
-    echo("------------------------------");
-    echo '<div style=" resize: both; "><pre>' . print_r($teachers, true) . '</pre></div>';
-    echo("------------------------------");
-    echo '<div style=" resize: both; "><pre>' . print_r($statsbycourse_average, true) . '</pre></div>';*/
-    /*echo '<hr>';
-    echo '<div style=" resize: both; "><pre>' . print_r($statsbycourse_comments, true) . '</pre></div>';
-    echo '<hr>';
-    echo '<div style=" resize: both; "><pre>' . print_r($statsbysection_average, true) . '</pre></div>';
-    echo '<hr>';
-    echo '<div style=" resize: both; "><pre>' . print_r($statsbysection_questions, true) . '</pre></div>';
-    echo '<hr>';
-    echo '<div style=" resize: both; "><pre>' . print_r($statsbysection_comments, true) . '</pre></div>';
-    echo '<hr>';
-    echo '<div style=" resize: both; "><pre>' . print_r($stats, true) . '</pre></div>';
-    echo '<hr>';*/
 
 
 } else {
