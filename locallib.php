@@ -470,6 +470,7 @@ function encuestascdc_obtiene_estadisticas_por_curso($stats) {
         $totalrespondents = count($row['respondents']);
         $totalstudents = 0;
         foreach($enrolledusers as $enrolleduser){
+            // TODO: cambiar hardcoded role en la siguiente función 
             $hasstudentrole = user_has_role_assignment($enrolleduser->id,5,$context->id);
             if($hasstudentrole) {
                 $totalstudents++;
@@ -1596,3 +1597,68 @@ function encuestascdc_obtiene_estadisticas_por_seccion_global($stats) {
     }
     return array($seccionstats, $preguntas, $comments);
 }
+
+function encuestascdc_obtiene_fechas_periodo($periodo, $fromdata, $todata) {
+		switch($periodo) {
+			case "all":
+				return(array(0, 1));
+				break;
+			case "today":
+				$a = mktime(0,0,0); // Hoy
+				$b = strtotime('+1 days');
+				$b = mktime(0,0,0,date('n',$b),date('j',$b),date('Y',$b));
+				return(array($a, $b));
+				break;
+			case "yesterday":
+				$a = strtotime('-1 days');
+				$a = mktime(0,0,0,date('n',$a),date('j',$a),date('Y',$a));
+				$b = time();
+				$b = mktime(0,0,0,date('n',$b),date('j',$b),date('Y',$b));
+				return(array($a, $b));
+				break;
+			case "lastweek":
+				$a = strtotime('last week');
+				$a = mktime(0,0,0,date('n',$a),date('j',$a),date('Y',$a));
+				$b = strtotime('+1 days');
+				$b = mktime(0,0,0,date('n',$b),date('j',$b),date('Y',$b));
+				return(array($a,$b));
+				break;
+			case "lastmonth":
+				$a = strtotime('last month');
+				$a = mktime(0,0,0,date('n',$a),date('j',$a),date('Y',$a));
+				$b = strtotime('+1 days');
+				$b = mktime(0,0,0,date('n',$b),date('j',$b),date('Y',$b));
+				return(array($a,$b));
+				break;
+			case "last7days":
+				$a=strtotime('-7 days');
+				$a = mktime(0,0,0,date('n',$a),date('j',$a),date('Y',$a));
+				$b = strtotime('+1 days');
+				$b = mktime(0,0,0,date('n',$b),date('j',$b),date('Y',$b));
+				return(array($a,$b));
+				break;
+			case "last30days":
+				$a = strtotime('-30 days');
+				$a = mktime(0,0,0,date('n',$a),date('j',$a),date('Y',$a));
+				$b = strtotime('+1 days');
+				$b = mktime(0,0,0,date('n',$b),date('j',$b),date('Y',$b));
+				return(array($a,$b));
+				break;
+			case "lastdate":
+				$a = strtotime('last Tuesday');
+				$a = mktime(0,0,0,date('n',$a),date('j',$a),date('Y',$a));
+				$b = strtotime('last Wednesday');
+				$b = mktime(0,0,0,date('n',$b),date('j',$b),date('Y',$b));
+				return(array($a,$b));
+			    break;
+			case "custom":
+			    $a = mktime(0,0,0,date('n', $fromdata),date('j', $fromdata),date('Y', $fromdata));
+			    $todata = strtotime(date('Y-m-d', $todata) . ' +1 day');
+			    $b = mktime(0,0,0,date('n', $todata),date('j', $todata),date('Y', $todata));
+				return(array($a,$b));
+			    break;
+			default:
+			    throw new Exception('Formato de período inválido:' . $periodo);
+				break;
+		}
+	}
