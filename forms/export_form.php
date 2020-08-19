@@ -32,6 +32,8 @@ class local_encuestascdc_export_form extends moodleform {
 
         $instance = $this->_customdata;
         
+        $categoryid = $instance['categoryid'];
+        
         // CATEGORÍAS
         $choices = core_course_category::make_categories_list('moodle/category:manage');
         $choices[0] = get_string('select');
@@ -39,6 +41,7 @@ class local_encuestascdc_export_form extends moodleform {
         
         $mform->addElement('header','filter','Filtros');
         
+        //Filtro categorías
 		$mform->addElement('autocomplete', 'id', 'Categoría de los cursos', $choices);
 		$mform->setType('id', PARAM_INT);
 		$mform->addRule('id', 'Debe escoger una categoría', 'required');
@@ -55,7 +58,8 @@ class local_encuestascdc_export_form extends moodleform {
 			'lastdate' => 'Última Fecha Fin',
 			'custom' => 'Personalizado'
 			);
-
+		
+		// Filtro Fecha inicio
 		$mform->addElement('select','start','Fecha de inicio',$choices);
 		$mform->setType('start',PARAM_RAW);
 
@@ -68,7 +72,8 @@ class local_encuestascdc_export_form extends moodleform {
 		$mform->hideIf('tostart','start','neq','custom');
 		$mform->setType('tostart',PARAM_INT);
 		$mform->setDefault('tostart', 0);
-
+		
+		// Filtro Fecha fin
 		$mform->addElement('select','end','Fecha de fin',$choices);
 		$mform->setType('end',PARAM_RAW);
 
@@ -81,8 +86,57 @@ class local_encuestascdc_export_form extends moodleform {
 		$mform->hideIf('toend','end','neq','custom');
 		$mform->setType('toend',PARAM_INT);
 		$mform->setDefault('toend', 0);
-		$this->add_action_buttons(false,"Obtener Reporte");
+		
+		// Filtros en segundo paso
+        if($categoryid>0) {
+        	// Filtro cursos
+        	
+        	// Buscamos todos los cursos de la categoría seleccionada en primer paso
+        	$coursecategory = core_course_category::get($categoryid);
+        	$courses = $coursecategory->get_courses(array('recursive'=>true));
+        	$courseids = array();
+        	foreach($courses as $course){
+        		$courseids[$course->id] = $course->fullname;
+        	}
+        	$options = array(
+			    'multiple' => true
+			);
+        	$mform->addElement('select','courseids', 'Cursos',$courseids, $options);
+        	$mform->setType('courseids', PARAM_INT);
+        	
+        	// Filtro editing teachers de los cursos anteriores
+        	$teacherids = array();
+        	foreach($courses as $course) {
+	        	$role = $DB->get_record('role', array('shortname' => 'editingteacher'));
+				$context = context_course::instance($course->id);
+				$teachers = get_role_users($role->id, $context);
+				
+				// Buscamos todos los editing teachers del curso
+				foreach($teachers as $teacher) {
+					$teacherids[$teacher->id] = $teacher->firstname . ' ' . $teacher->lastname;
+				}
+        	}
+        	$mform->addElement('select', 'teacherids', 'Profesores', $teacherids, $options);
+        	$mform->setType('teacherids', PARAM_INT);
+			
+			// Filtro de Managers del curso
+        	$managerids = array();
+        	foreach($courses as $course) {
+	        	$role = $DB->get_record('role', array('shortname' => 'manager'));
+				$context = context_course::instance($course->id);
+				$managers = get_role_users($role->id, $context);
+				
+				// Buscamos todos los editing teachers del curso
+				foreach($managers as $manager) {
+					$managerids[$manager->id] = $manager->firstname . ' ' . $manager->lastname;
+				}
+        	}
+        	$mform->addElement('select', 'managerids', 'Coordinadores', $managerids, $options);
+        	$mform->setType('managerids', PARAM_INT);
+
+        } 
         
+        $this->add_action_buttons(false,"Obtener Reporte");
     }
 
     public function validation($data, $files) {
