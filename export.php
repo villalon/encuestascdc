@@ -50,7 +50,7 @@ $categoryid = optional_param('id', 0, PARAM_RAW);
 
 // The page header and heading
 echo $OUTPUT->header ();
-echo $OUTPUT->heading ('Exportaión de información de encuestas');
+echo $OUTPUT->heading ('Exportación de información de encuestas');
 
 // Se construye formulario
 $catform = new local_encuestascdc_export_form(null,array('categoryid'=>$categoryid));
@@ -80,6 +80,11 @@ if(isset($formdata->teacherids)) {
 $managerids = array();
 if(isset($formdata->teacherids)) {
     $managerids = $formdata->managerids;
+}
+
+$sections = array();
+if(isset($formdata->sections)) {
+    $sections = $formdata->sections;
 }
 $questionnaires = $DB->get_records('questionnaire');
 
@@ -267,10 +272,16 @@ foreach($records as $record) {
     if(count($courseids) > 0 && !in_array($record->courseid,$courseids)){
         continue;
     }
+    
     // Si no existe la categoría, se reporta error
     if(!$coursecat = $DB->get_record('course_categories', array('id'=>$record->category))) {
         print_error("Curso con categoría inválida");
     }
+    
+	// Filtro por secciones
+	if(!in_array($record->seccion, $sections) && count($sections)>0) {
+	    continue;
+	}
     
     $context = context_course::instance($record->courseid);
     
@@ -306,7 +317,7 @@ foreach($records as $record) {
 	    continue;
 	}
 
-	$managersstring = implode(', ',$managersarray);
+	$managersstring = implode(', ', $managersarray);
 
     // Separamos data por usuario	  
 	$answers = explode('#',$record->answers);
@@ -366,7 +377,7 @@ foreach($records as $record) {
 			$coursecat->name,
 			$editingteachersstring,
 			$managersstring
-			);
+		);
 		$countrows += count($data);
 	}
 }

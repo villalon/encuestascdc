@@ -89,11 +89,37 @@ class local_encuestascdc_export_form extends moodleform {
 		
 		// Filtros en segundo paso
         if($categoryid>0) {
+        	$coursecategory = core_course_category::get($categoryid);
+        	$courses = $coursecategory->get_courses(array('recursive'=>true));
+        	$courseidssql = array();
+        	
+        	foreach($courses as $course) {
+        		$courseidssql[] = $course->id;
+        	}
+        	
+        	list($insql, $inparams) = $DB->get_in_or_equal($courseidssql);
+
+        	
+        	$sqlsections = "
+	   SELECT DISTINCT q.name
+				  FROM {questionnaire} qu
+			INNER JOIN {course} c ON (qu.course = c.id AND c.id $insql)
+			INNER JOIN {questionnaire_survey} s ON (s.id = qu.id)
+			INNER JOIN {questionnaire_question} q ON (q.surveyid = s.id AND  q.deleted = 'n')
+			";
+			
+			$sections = $DB->get_records_sql($sqlsections,$inparams);
+			
+			$sectionsarray = array();
+			foreach($sections as $section){
+				if(strlen($section->name) > 1) {
+					$sectionsarray[$section->name] = $section->name;
+				}
+			}
+			
         	// Filtro cursos
         	
         	// Buscamos todos los cursos de la categoría seleccionada en primer paso
-        	$coursecategory = core_course_category::get($categoryid);
-        	$courses = $coursecategory->get_courses(array('recursive'=>true));
         	$courseids = array();
         	foreach($courses as $course){
         		$courseids[$course->id] = $course->fullname;
@@ -133,6 +159,10 @@ class local_encuestascdc_export_form extends moodleform {
         	}
         	$mform->addElement('select', 'managerids', 'Coordinadores', $managerids, $options);
         	$mform->setType('managerids', PARAM_INT);
+        	
+        	// Filtro secciones
+        	$mform->addElement('select', 'sections', 'Secciones', $sectionsarray, $options);
+        	$mform->setType('sections', PARAM_RAW);
 
         } 
         
