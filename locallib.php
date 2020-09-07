@@ -1113,7 +1113,7 @@ function local_encuestascdc_util_mes_en_a_es($fecha, $corta = false) {
 }
 
 function encuestascdc_dibuja_portada($questionnaire, $group, $profesores, $profesorindex, $asignatura, $empresa, $tasa, $programa, $destinatario, $coordinadora, $totalestudiantes) {
-    global $OUTPUT, $NOMBRES_DESTINATARIOS;
+    global $OUTPUT, $NOMBRES_DESTINATARIOS, $DB;
 
     // Se muestra la primera página con información del informe y general
     $portada = html_writer::start_div('primera-pagina');
