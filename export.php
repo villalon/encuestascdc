@@ -33,7 +33,6 @@ $frontpagecontext = context_course::instance(SITEID);
 // require_capability('moodle/course:update', $frontpagecontext);
 // Contexto de sistema
 $context = context_system::instance ();
-
 // Page navigation and URL settings.
 $PAGE->set_url ( $CFG->wwwroot . '/local/encuestascdc/export.php' );
 $PAGE->set_context ( $context );
@@ -391,33 +390,37 @@ $table = new html_table();
 
 // Dependiendo de que si existen datos o no, mostramos tabla o mensaje
 if($countrows > 0) {
-    echo '<input type="button" class="btn btn-primary" style="float:right;" id="exportarexcel" name="excel" value="Exportar a Excel" onClick="exportarExcel();">';
+
+    echo '<input type="button" class="btn btn-primary" style="float:right;" id="exportarexcel1" name="excel" value="Exportar a Excel" onClick="exportarExcel();">';
     echo html_writer::table($table);
-    echo '<input type="button" class="btn btn-primary" style="float:right;" id="exportarexcel" name="excel" value="Exportar a Excel" onClick="exportarExcel();">';
+    echo '<input type="button" class="btn btn-primary" style="float:right;" id="exportarexcel2" name="excel" value="Exportar a Excel" onClick="exportarExcel();">';
 } else {
     echo $OUTPUT->heading ('No se encontraron registros.',5);
 }
 
+
 // Script de exportación a Excel
-echo "
-<script lang='javascript' src='dist/xlsx.full.min.js'></script>
+echo '<script lang="javascript" src="dist/xlsx.full.min.js"></script>';
+echo '
 <script>
+
 function exportarExcel() {
 	/* create new workbook */
 	var workbook = XLSX.utils.book_new();
-    var table = document.getElementById('export');
+    var table = document.getElementById("'.$table->id.'");
 	var ws = XLSX.utils.table_to_sheet(table, {raw:true});
-    XLSX.utils.book_append_sheet(workbook, ws, '$table->title');
-	if( $countrows == 0) {
-		alert('No se encontraron datos');
+    XLSX.utils.book_append_sheet(workbook, ws, "'.$table->title.'");
+	if( '.$countrows.' == 0) {
+		alert("No se encontraron datos");
 		return;
 	}
 	var f = new Date();
-    var date = 'exportacion_'f.getHours() + ':' + f.getMinutes + ':' + f.getSeconds + '_' + f.getDate() + '-' + f.getMonth() + '-' + f.getFullYear();
-	return XLSX.writeFile(workbook, 'export_' + date + '.xlsx');
+    var date = "exportacion_" + f.getHours() + ":" + f.getMinutes + ":" + f.getSeconds + "_" + f.getDate() + "-" + f.getMonth() + "-" + f.getFullYear();
+	return XLSX.writeFile(workbook, "export_" + date + ".xlsx");
 }
-</script>
-";
 
+
+</script>
+';
 
 echo $OUTPUT->footer ();
