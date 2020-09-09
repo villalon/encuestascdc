@@ -102,8 +102,9 @@ class local_encuestascdc_questionnaire_form extends moodleform
 
             $select = array(
                 '' => get_string('selectreporttype', 'local_encuestascdc'),
-                'course' => get_string('reportcourse', 'local_encuestascdc'),
-                'program' =>  get_string('reportprogram', 'local_encuestascdc'));
+                'course' => get_string('reportcourse', 'local_encuestascdc'));//, sacar ");" al descomentar
+                //CONGLOMERADO COMENTADO TEMPORAL REPORTE GLOBAL
+                //'program' =>  get_string('reportprogram', 'local_encuestascdc'));
             $formselect = $mform->addElement('select', 'reporttype', get_string('reporttype', 'local_encuestascdc'), $select);
             $mform->addHelpButton('reporttype', 'reporttype', 'local_encuestascdc');
             $mform->addRule('reporttype', 'Debe seleccionar un tipo de reporte', 'required');
