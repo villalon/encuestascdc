@@ -373,7 +373,7 @@ foreach($records as $record) {
 			$timeend,
 			$coursecat->name,
 			$record->fullname,
-			$record->fullname,
+			$record->name,
 			$record->seccion,
 			$record->opcion,
 			$answerdata,
