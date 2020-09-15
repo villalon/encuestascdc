@@ -47,6 +47,10 @@ $PAGE->requires->jquery_plugin ( 'ui-css' );
 // Parámetros necesarios para procesar datos
 $categoryid = optional_param('id', 0, PARAM_RAW);
 
+require_login();
+
+require_capability('mod/questionnaire:manage', $context);
+
 // The page header and heading
 echo $OUTPUT->header ();
 echo $OUTPUT->heading ('Exportación de información de encuestas');
