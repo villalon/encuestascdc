@@ -134,12 +134,14 @@ SELECT qu.id,
 	qt.type,
 	group_concat(ue.timeend order by ue.userid separator '#') timeends,
 	group_concat(ue.timestart order by ue.userid separator '#') timestarts,
-	c.category
+	c.category,
+	qs.name surveyname
 FROM
 	{questionnaire} qu
 	INNER JOIN {course} c ON (qu.course = c.id AND qu.id $insql)
 	INNER JOIN {course_modules} cm on (cm.course = qu.course AND cm.module = ? AND cm.instance = qu.id)
 	INNER JOIN {questionnaire_survey} s ON (s.id = qu.sid)
+	LEFT JOIN {questionnaire} qs ON (qs.sid = s.id)
 	INNER JOIN {questionnaire_question} q ON (q.surveyid = s.id and q.type_id = ? and q.deleted = 'n')
 	INNER JOIN {questionnaire_quest_choice} qc ON (qc.question_id = q.id and q.type_id = ?)
     INNER JOIN {questionnaire_question_type} qt ON (q.type_id = qt.typeid)
@@ -164,12 +166,14 @@ SELECT qu.id,
     qt.type,
 	group_concat(ue.timeend order by ue.userid separator '#') timeends,
 	group_concat(ue.timestart order by ue.userid separator '#') timestarts,
-	c.category
+	c.category,
+	qs.name surveyname
 FROM
 	{questionnaire} qu
 	INNER JOIN {course} c ON (qu.course = c.id AND qu.id $insql)
 	INNER JOIN {course_modules} cm on (cm.course = qu.course AND cm.module = ? AND cm.instance = qu.id)
 	INNER JOIN {questionnaire_survey} s ON (s.id = qu.sid)
+	LEFT JOIN {questionnaire} qs ON (qs.sid = s.id)
 	INNER JOIN {questionnaire_question} q ON (q.surveyid = s.id and q.type_id = ? and q.deleted = 'n')
     INNER JOIN {questionnaire_question_type} qt ON (q.type_id = qt.typeid)
     LEFT JOIN {questionnaire_response} r ON (r.questionnaireid = qu.id)
@@ -193,12 +197,14 @@ SELECT qu.id,
     qt.type,
 	group_concat(ue.timeend order by ue.userid separator '#') timeends,
 	group_concat(ue.timestart order by ue.userid separator '#') timestarts,	
-	c.category
+	c.category,
+	qs.name surveyname
 FROM
 	{questionnaire} qu
 	INNER JOIN {course} c ON (qu.course = c.id AND qu.id $insql)
 	INNER JOIN {course_modules} cm on (cm.course = qu.course AND cm.module = ? AND cm.instance = qu.id)
 	INNER JOIN {questionnaire_survey} s ON (s.id = qu.sid)
+	LEFT JOIN {questionnaire} qs ON (qs.sid = s.id)
 	INNER JOIN {questionnaire_question} q ON (q.surveyid = s.id and q.type_id = ? and q.deleted = 'n')
     INNER JOIN {questionnaire_question_type} qt ON (q.type_id = qt.typeid)
     LEFT JOIN {questionnaire_response} r ON (r.questionnaireid = qu.id)
@@ -373,7 +379,7 @@ foreach($records as $record) {
 			$timeend,
 			$coursecat->name,
 			$record->fullname,
-			$record->name,
+			$record->surveyname,
 			$record->seccion,
 			$record->opcion,
 			$answerdata,
