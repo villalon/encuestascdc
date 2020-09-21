@@ -212,7 +212,7 @@ FROM
     INNER JOIN {enrol} e ON (e.courseid = c.id AND e.enrol = 'manual')
     INNER JOIN {user_enrolments} ue ON (ue.enrolid = e.id AND ue.userid = r.userid)   
 GROUP BY qu.id,c.id,s.id, q.id
-ORDER BY position";
+ORDER BY surveyname,position";
 
     $params = $inparams;
     $params[] = $module->id;
