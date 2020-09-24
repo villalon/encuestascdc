@@ -89,6 +89,12 @@ $sections = array();
 if(isset($formdata->sections)) {
     $sections = $formdata->sections;
 }
+
+$questionnairessearch = array();
+if(isset($formdata->questionnaires)) {
+    $questionnairessearch = $formdata->questionnaires;
+}
+
 $questionnaires = $DB->get_records('questionnaire');
 
     // Validación de instalación del módulo questionnaire
@@ -115,7 +121,13 @@ $questionnaires = $DB->get_records('questionnaire');
     foreach($questionnaires as $questionnaire) {
         $questionnairesql[] = $questionnaire->id;
     }
-
+    
+    if(count($questionnairesql) == 0) {
+        echo $OUTPUT->notification('No se encontraron encuestas o respuesta a encuestas, intente cambiar los filtros o revisar categoría de cursos.', 'info');
+        echo $OUTPUT->footer ();
+        die();
+    }
+    
     list($insql, $inparams) = $DB->get_in_or_equal($questionnairesql);
 // Query para respuestas
     $sql="
@@ -291,6 +303,12 @@ foreach($records as $record) {
 	if(!in_array($record->seccion, $sections) && count($sections)>0) {
 	    continue;
 	}
+	
+	// Filtro por cuestionarios
+	if(!in_array($record->seccion, $questionnairessearch) && count($questionnairessearch)>0) {
+	    continue;
+	}
+    
     
     $context = context_course::instance($record->courseid);
     

@@ -41,8 +41,13 @@ class local_encuestascdc_export_form extends moodleform {
         
         $mform->addElement('header','filter','Filtros');
         
+		$options = array(                                                                                                           
+		    'multiple' => true,                                                  
+		    'noselectionstring' => 'Seleccionar',                                                                
+		);         
+        
         //Filtro categorías
-		$mform->addElement('autocomplete', 'id', 'Categoría de los cursos', $choices);
+		$mform->addElement('autocomplete', 'id', 'Categoría de los cursos', $choices, $options);
 		$mform->setType('id', PARAM_INT);
 		$mform->addRule('id', 'Debe escoger una categoría', 'required');
 
@@ -117,6 +122,23 @@ class local_encuestascdc_export_form extends moodleform {
 				}
 			}
 			
+			$sqlquestionnaires = "
+	   SELECT DISTINCT qu.name
+				  FROM {questionnaire} qu
+			INNER JOIN {course} c ON (qu.course = c.id AND c.id $insql)
+			INNER JOIN {questionnaire_survey} s ON (s.id = qu.id)
+			INNER JOIN {questionnaire_question} q ON (q.surveyid = s.id AND  q.deleted = 'n')
+			";
+			
+			$questionnaires = $DB->get_records_sql($sqlquestionnaires,$inparams);
+			
+			$questionnairesarray = array();
+			
+			foreach($questionnaires as $questionnaire) {
+				if(strlen($questionnaire->name) > 1) {
+					$questionnairesarray[$questionnaire->name] = $questionnaire->name;
+				}
+			}
         	// Filtro cursos
         	
         	// Buscamos todos los cursos de la categoría seleccionada en primer paso
@@ -163,6 +185,10 @@ class local_encuestascdc_export_form extends moodleform {
         	// Filtro secciones
         	$mform->addElement('select', 'sections', 'Secciones', $sectionsarray, $options);
         	$mform->setType('sections', PARAM_RAW);
+
+        	// Filtro cuestionarios
+        	$mform->addElement('select', 'questionnaires', 'Encuestas', $questionnairesarray, $options);
+        	$mform->setType('questionnaires', PARAM_RAW);
 
         } 
         
