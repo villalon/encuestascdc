@@ -274,12 +274,23 @@ $countrows = 0;
 // Revisamos y creamos variables para los distintos filtros
 
 // Primero, de los cursos de la categoría
-$coursecategory = core_course_category::get($formdata->id);
-if(!$coursecategory) {
-    print_error('Categoría no existe o usuario no tiene permisos ' . $id);
+
+$categories = $formdata->id;
+
+$courses = array();
+
+foreach($categories as $category) {
+    $coursecategory = core_course_category::get($category);
+    if(!$coursecategory) {
+        print_error('Categoría no existe o usuario no tiene permisos ' . $id);
+    }
+    $coursecategory->resort_courses("fullname");
+    $coursescategory = $coursecategory->get_courses(array('recursive'=>true));
+    $courses = array_merge($courses,$coursescategory);
 }
-$coursecategory->resort_courses("fullname");
-$courses = $coursecategory->get_courses(array('recursive'=>true));
+
+
+
 // Luego, las fechas
 list($fromstart, $tostart) = encuestascdc_obtiene_fechas_periodo($formdata->start, $formdata->fromstart, $formdata->tostart);
 list($fromend, $toend) = encuestascdc_obtiene_fechas_periodo($formdata->end, $formdata->fromend, $formdata->toend);

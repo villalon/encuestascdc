@@ -32,7 +32,7 @@ class local_encuestascdc_export_form extends moodleform {
 
         $instance = $this->_customdata;
         
-        $categoryid = $instance['categoryid'];
+        $categoryids = $instance['categoryid'];
         
         // CATEGORÍAS
         $choices = core_course_category::make_categories_list('moodle/category:manage');
@@ -93,13 +93,15 @@ class local_encuestascdc_export_form extends moodleform {
 		$mform->setDefault('toend', 0);
 		
 		// Filtros en segundo paso
-        if($categoryid>0) {
-        	$coursecategory = core_course_category::get($categoryid);
-        	$courses = $coursecategory->get_courses(array('recursive'=>true));
+
+        if(count($categoryids) > 1) {
         	$courseidssql = array();
-        	
-        	foreach($courses as $course) {
-        		$courseidssql[] = $course->id;
+        	foreach($categoryids as $categoryid){
+	        	$coursecategory = core_course_category::get($categoryid);
+	        	$courses = $coursecategory->get_courses(array('recursive'=>true));
+	        	foreach($courses as $course) {
+	        		$courseidssql[] = $course->id;
+	        	}
         	}
         	
         	list($insql, $inparams) = $DB->get_in_or_equal($courseidssql);
