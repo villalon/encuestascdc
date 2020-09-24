@@ -286,10 +286,8 @@ foreach($categories as $category) {
     }
     $coursecategory->resort_courses("fullname");
     $coursescategory = $coursecategory->get_courses(array('recursive'=>true));
-    $courses = array_merge($courses,$coursescategory);
+    $courses = $courses + $coursescategory;
 }
-
-
 
 // Luego, las fechas
 list($fromstart, $tostart) = encuestascdc_obtiene_fechas_periodo($formdata->start, $formdata->fromstart, $formdata->tostart);
