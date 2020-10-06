@@ -211,7 +211,7 @@ class local_encuestascdc_questionnaire_form extends moodleform
 
             $formselect = $mform->addElement('text', 'empresa', get_string('empresa', 'local_encuestascdc'), $attributes);
             $mform->setType('empresa', PARAM_RAW_TRIMMED);
-            $mform->setDefault('empresa', $defaultcategory);
+            $mform->setDefault('empresa', $coursecat->name);
             $mform->addRule('empresa', 'Debe indicar el nombre de la empresa', 'required');
 
             $formselect = $mform->addElement('text', 'asignatura', get_string('asignatura', 'local_encuestascdc'), $attributes);
@@ -221,7 +221,7 @@ class local_encuestascdc_questionnaire_form extends moodleform
 
             $formselect = $mform->addElement('text', 'programa', get_string('programa', 'local_encuestascdc'), $attributes);
             $mform->setType('programa', PARAM_RAW_TRIMMED);
-            $mform->setDefault('programa', $coursecat->name);
+            $mform->setDefault('programa', $course->fullname);
             $mform->addRule('programa', 'Debe indicar el nombre del programa', 'required');
 
             $this->add_action_buttons(false, 'Ver reporte');

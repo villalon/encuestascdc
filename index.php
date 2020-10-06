@@ -37,6 +37,7 @@ $url = new moodle_url('/local/encuestascdc/index.php', array('id'=>$courseid));
 require_login($course);
 // El usuario debe tener permiso asignado
 $context = context_course::instance($courseid);
+$contextsystem = context_system::instance();
 require_capability('local/encuestascdc:view', $context);
 // Id de la encuesta
 $qid = optional_param('qid', 0, PARAM_INT);
@@ -73,7 +74,7 @@ $rolprofesor = $DB->get_record('role', array('shortname' => 'editingteacher'));
 $profesores = get_role_users($rolprofesor->id, $context);
 // Listado de profesores dentro del curso
 $rolgestor = $DB->get_record('role', array('shortname' => 'manager'));
-$gestores = get_role_users($rolgestor->id, $context, true);
+$gestores = get_role_users($rolgestor->id, $context, false);
 $teachers = array();
 if($destinatario !== 'program-director' && $destinatario !== 'teacher') {
     $teachers[1] = 'Profesor 1';
@@ -86,6 +87,7 @@ if($destinatario !== 'program-director' && $destinatario !== 'teacher') {
         $i++;
     }
 }
+
 $managers = array();
 $i=1;
 foreach($gestores as $gestor) {
