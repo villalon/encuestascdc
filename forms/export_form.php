@@ -94,7 +94,7 @@ class local_encuestascdc_export_form extends moodleform {
 		
 		// Filtros en segundo paso
 
-        if(count($categoryids) > 1) {
+        if(count($categoryids) > 0) {
         	$courseidssql = array();
         	foreach($categoryids as $categoryid){
 	        	$coursecategory = core_course_category::get($categoryid);

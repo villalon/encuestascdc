@@ -45,7 +45,7 @@ $PAGE->requires->jquery_plugin ( 'ui' );
 $PAGE->requires->jquery_plugin ( 'ui-css' );
 
 // Parámetros necesarios para procesar datos
-$categoryid = optional_param('id', 0, PARAM_RAW);
+$categoryid = optional_param_array('id', 0, PARAM_RAW);
 
 require_login();
 
@@ -368,6 +368,8 @@ foreach($records as $record) {
 	    if(strpos($record->type,'Box')){
 	        $textrecord = $DB->get_record('questionnaire_response_text',array('id' => $answer));
 	        $answerdata = $textrecord->response;
+	    } elseif($answer == '-1') {
+	        $answerdata = 'NA';
 	    } else {
 	        $answerdata = $answer;
 	    }
