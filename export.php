@@ -45,7 +45,7 @@ $PAGE->requires->jquery_plugin ( 'ui' );
 $PAGE->requires->jquery_plugin ( 'ui-css' );
 
 // Parámetros necesarios para procesar datos
-$categoryid = optional_param_array('id', 0, PARAM_RAW);
+$categoryid = optional_param_array('id', array(), PARAM_RAW);
 
 require_login();
 
