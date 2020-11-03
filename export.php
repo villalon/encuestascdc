@@ -147,7 +147,8 @@ SELECT qu.id,
 	group_concat(ue.timeend order by ue.userid separator '#') timeends,
 	group_concat(ue.timestart order by ue.userid separator '#') timestarts,
 	c.category,
-	qs.name surveyname
+	qs.name surveyname,
+	qu.intro
 FROM
 	{questionnaire} qu
 	INNER JOIN {course} c ON (qu.course = c.id AND qu.id $insql)
@@ -179,7 +180,8 @@ SELECT qu.id,
 	group_concat(ue.timeend order by ue.userid separator '#') timeends,
 	group_concat(ue.timestart order by ue.userid separator '#') timestarts,
 	c.category,
-	qs.name surveyname
+	qs.name surveyname,
+	qu.intro
 FROM
 	{questionnaire} qu
 	INNER JOIN {course} c ON (qu.course = c.id AND qu.id $insql)
@@ -210,7 +212,8 @@ SELECT qu.id,
 	group_concat(ue.timeend order by ue.userid separator '#') timeends,
 	group_concat(ue.timestart order by ue.userid separator '#') timestarts,	
 	c.category,
-	qs.name surveyname
+	qs.name surveyname,
+	qu.intro
 FROM
 	{questionnaire} qu
 	INNER JOIN {course} c ON (qu.course = c.id AND qu.id $insql)
@@ -335,9 +338,7 @@ foreach($records as $record) {
 	if(count($intersectedteachers) == 0 && count($teacherids) > 0) {
 	    continue;
 	}
-
-	$editingteachersstring = implode(', ',$teachersarray);
-	
+    
 	// Manejo managers
 	$managers = get_role_users($managerrole->id, $context);
 	$managersarray = array();
@@ -363,6 +364,15 @@ foreach($records as $record) {
 	// Índice para poder  saber en cual usuario estamos, y así homologar data
 	// TODO: Cambiar lo del índice a algo más elegante.
 	$index = 0;
+	
+	if(0 < strpos($record->seccion, '-P')) {
+        $howmanymatches = preg_match_all("/<li>PROFESOR\/FACILITADOR\s*\d:(.*)<\/li>/", $record->intro, $teachersarray);
+        $teacherindex = substr($record->seccion, -1) - 1;
+        $editingteachersstring = $teachersarray[1][$teacherindex];
+	} else {
+	    $editingteachersstring = implode($teachersarray, ', ');  
+	}
+	
 	foreach($answers as $answer){
         
 	    if(strpos($record->type,'Box')){
@@ -401,6 +411,7 @@ foreach($records as $record) {
         } else {
             $timestart = date("d-m-Y", $timestarts[0]);
         }
+        
         
         // Agregamos data a la tabla
 		$data[] = array(
